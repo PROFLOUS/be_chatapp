@@ -4,7 +4,7 @@ const MyError = require('../exception/MyError');
 
 const commonUtils = require('../utils/commonUtils');
 const Member = require('../models/Member');
-const awsS3Service = require('../services/AwsS3Service');
+const awsS3Service = require('../services/awsS3Service');
 const MessageService ={
 
     //get list messages of conversationId
