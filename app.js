@@ -31,16 +31,6 @@ app.use(handleErr);
 
 routes(app,io);
 
-// redisDb.set('63181c3d2499351136c9da4f ', {
-//     uid:"63181c3d2499351136c9da4f",
-//     first_name:"Vu",
-//     last_name:"Ga",
-//     avatar:"",    
-//     isOnline: true,
-//     lastLogin: null,
-// });
-
-
 
 const port = process.env.PORT
 
