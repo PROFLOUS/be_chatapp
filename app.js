@@ -29,7 +29,12 @@ const io = socketio(server);
 socket(io);
 app.use(handleErr);
 
+app.use('/api', (res,req)=>{
+    res.send("hello")
+});
+
 routes(app,io);
+
 
 
 const port = process.env.PORT
