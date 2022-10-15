@@ -146,7 +146,55 @@ const MessageService ={
 
         return await Message.findById(_id);
     }
+    //addReacts
+    addReact:async(req) => {
+        const {messId, icon, userId, imgUser, nameUser} = req.body;
+        Message.findById(messId, function(err, messages) {
+            let array = messages.reacts;
+            let checkReact = false;
+            let checkUser = false;
+            array.forEach(element => {
+                if (element.userId == userId) {
+                    let arrayReact =  element.react;
+                    arrayReact.forEach(elementReact => {
+                        if (elementReact.name == icon) {
+                            elementReact.quantity = elementReact.quantity + 1;
+                            checkReact = true;
+                        }
+                    });
+                    if(checkReact == false)
+                    {
+                        arrayReact.push({name: icon, quantity: 1});
+                    }
+                    checkUser = true;
+                }
+            });
+            if(checkUser == false)
+            {
+                array.push({react: [{name: icon, quantity: 1}], userId: userId, imgUser: imgUser, nameUser: nameUser});
+            }
+            console.log(array);
+            Message.findByIdAndUpdate(messId, {reacts: array}, {new: true}, function(err, messages) {
+                console.log("Cập nhật thành công!");
+            });
+        });
+    },
 
+    //deleteReacts
+    deleteReact:async(req) => {
+            const {messId, userId} = req.body;
+            Message.findByIdAndUpdate(messId, {$pull: {reacts: { userId: userId }}}, function(err, messages) {
+            console.log("Xóa thành công");
+        });
+    },
+
+    //getReacts
+    getReact:async(req, res) => {
+            const messId = req.params.idMessage;
+            Message.findById(messId, function(err, messages) {
+            res.json(messages.reacts);
+        });
+    },
 }
 
 module.exports = MessageService;
