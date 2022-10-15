@@ -66,7 +66,34 @@ class MessageController {
     }
 
 
+    //addReacts
+    async addReact(req, res, next) {
+        try {
+            const message = await messageService.addReact(req);
+            res.status(201).json(message);
+        } catch (err) {
+            next(err);
+        }
+    }
 
+    //deleteReacts
+    async deleteReact(req, res, next) {
+        try {
+            const message = await messageService.deleteReact(req);
+            res.status(201).json(message);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    //getReacts
+    async getReact(req, res, next) {
+        try {
+           messageService.getReact(req, res);
+        } catch (err) {
+            next(err);
+        }
+    }
 
 
 
