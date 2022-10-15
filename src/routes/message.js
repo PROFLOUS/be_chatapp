@@ -11,7 +11,12 @@ const messageRouter = (io) => {
     router.post('/text', messageController.addText);
     //send file message
     router.post('/files',uploadFile.uploadFileMiddleware,messageController.addFile);
-
+    //send react
+    router.post('/addReact', messageController.addReact);
+    //delete react
+    router.post('/deleteReact', messageController.deleteReact);
+    //get reacts
+    router.get('/reacts/getReact', messageController.getReact);
 
     return router;
 }
