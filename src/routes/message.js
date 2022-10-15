@@ -16,7 +16,7 @@ const messageRouter = (io) => {
     //delete react
     router.post('/deleteReact', messageController.deleteReact);
     //get reacts
-    router.get('/reacts/getReact', messageController.getReact);
+    router.get('/reacts/getReact/:idMessage', messageController.getReact);
 
     return router;
 }
