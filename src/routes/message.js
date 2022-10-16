@@ -17,7 +17,10 @@ const messageRouter = (io) => {
     router.post('/deleteReact', messageController.deleteReact);
     //get reacts
     router.get('/reacts/getReact/:idMessage', messageController.getReact);
-
+    //thu hoi tin nhan
+    router.post('/reMessage', messageController.reMessage);
+    //xoa tin nhan
+    router.post('/deleteMessage', messageController.deleteMessage);
     return router;
 }
 
