@@ -4,7 +4,7 @@ const ObjectId = mongoose.Types.ObjectId;
 
 const messageSchema = new Schema({
     userId: {
-        type: ObjectId,
+        type: String,
         required: true,
     },
     content: {

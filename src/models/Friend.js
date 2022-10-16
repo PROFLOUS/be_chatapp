@@ -6,7 +6,7 @@ const ObjectId = mongoose.Types.ObjectId;
 const friendSchema = new Schema({
 user:[{
     userId: {
-        type: ObjectId,
+        type: String,
         required: true
       },
       userFistName: {

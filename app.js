@@ -12,6 +12,7 @@ require('dotenv').config()
 const connectDB = require('./src/config/connectDB')
 const app = express()
 const useragent = require('express-useragent');
+const rd = require('./src/app/redis');
 // Connect to MongoDB
 connectDB()
 
@@ -28,6 +29,15 @@ socket(io);
 app.use(handleErr);
 
 routes(app,io);
+
+// rd.set('ztpYIbpqoiYVDVsf0h9Clzg7QgW2',{
+//     "uid": "ztpYIbpqoiYVDVsf0h9Clzg7QgW2",
+//     "first_name": "Anh",
+//     "last_name": "Nguyen",
+//     "avatar": "",
+//     "isOnline": true,
+//     "lastLogin": null
+// })
 
 
 const port = process.env.PORT

@@ -99,37 +99,37 @@ use('test');
 //     "conversationId":ObjectId("63214e5ff15b81ae2fce55f4")
 // })
 
-db.conversations.aggregate([
-    {
-        $match: {
-            "members.userId":{$in:[ObjectId("631845c8d36168b88479d878")]}
-        },
-    },
-    {
-        $lookup: {
-            from: 'messages',
-            localField: 'lastMessageId',
-            foreignField: '_id',
-            as: 'lastMessage',
-        },
-    },
-    {
-        $lookup: {
-            from: 'members',
-            localField: '_id',
-            foreignField: 'conversationId',
-            as: 'mb',
-        },
-    },
-    {
-       $match: {
-            "mb.userId":ObjectId("631845c8d36168b88479d878")
-        },
-    },
-    {
-      $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$mb", 0 ] }, "$$ROOT" ] } }
-    },
-    { $project: { mb: 0 } },
+// db.conversations.aggregate([
+//     {
+//         $match: {
+//             "members.userId":{$in:[ObjectId("631845c8d36168b88479d878")]}
+//         },
+//     },
+//     {
+//         $lookup: {
+//             from: 'messages',
+//             localField: 'lastMessageId',
+//             foreignField: '_id',
+//             as: 'lastMessage',
+//         },
+//     },
+//     {
+//         $lookup: {
+//             from: 'members',
+//             localField: '_id',
+//             foreignField: 'conversationId',
+//             as: 'mb',
+//         },
+//     },
+//     {
+//        $match: {
+//             "mb.userId":ObjectId("631845c8d36168b88479d878")
+//         },
+//     },
+//     {
+//       $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$mb", 0 ] }, "$$ROOT" ] } }
+//     },
+//     { $project: { mb: 0 } },
     // {
     //     $project: {
     //         name: 1,
@@ -155,7 +155,7 @@ db.conversations.aggregate([
     //     $limit: 20,
     // },
     
-])
+// ])
 
 // db.conversations.countDocuments({
 //     "members.userId":{$in:[ObjectId("63181c892499351136c9da51")]}
@@ -193,3 +193,9 @@ db.conversations.aggregate([
 //         },
 //     },
 // ])
+// db.conversations.deleteMany({})
+// db.friendrequests.deleteMany({})
+// db.friends.deleteMany({})
+db.members.deleteMany({})
+// db.messages.deleteMany({})
+

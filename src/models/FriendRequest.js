@@ -5,8 +5,8 @@ const NotFoundError = require('../exception/NotFoundError');
 
 const friendReqSchema = new Schema(
     {
-        senderId: ObjectId,
-        receiverId: ObjectId,
+        senderId: String,
+        receiverId: String,
     },
     { timestamps: true }
 );

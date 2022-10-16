@@ -17,7 +17,7 @@ const memberSchema = new Schema({
     default: 0
   },
   userId: {
-    type: ObjectId,
+    type: String,
   },
   conversationId: {
     type: ObjectId,

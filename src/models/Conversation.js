@@ -16,7 +16,7 @@ const conversationSchema = new Schema({
     members: {
         type: [{
             userId: {
-                type: ObjectId,
+                type: String,
                 required: true
               },
               userFistName: {
@@ -87,7 +87,7 @@ conversationSchema.statics.getMemberByCon = async (
         },
         {
             $match: {
-                "members.userId":{$ne:ObjectId(userId)}
+                "members.userId":{$ne:userId}
             },
         },
     ]);
@@ -101,7 +101,7 @@ conversationSchema.statics.countConversationByUserId = async (
     userId,
 ) => {
     const totalCon = await Conversation.countDocuments({
-        "members.userId":{$all:[ObjectId(userId)]}
+        "members.userId":{$all:[userId]}
     });
 
     return totalCon;
@@ -115,7 +115,7 @@ conversationSchema.statics.getAllConversation = async (
     const getAll = await Conversation.aggregate([
         {
             $match: {
-                    "members.userId":{$in:[ObjectId(userId)]}
+                    "members.userId":{$in:[userId]}
             },
         },
         {
@@ -136,7 +136,7 @@ conversationSchema.statics.getAllConversation = async (
         },
         {
             $match: {
-                 "mb.userId":ObjectId(userId)
+                 "mb.userId":userId
              },
          },
          {

@@ -3,6 +3,8 @@ const Conversation = require('../models/Conversation');
 const Message = require('../models/Message');
 const NotFoundError = require('../exception/NotFoundError');
 const redisDb = require('../app/redis');
+const ObjectId = require('mongodb').ObjectId;
+const mongoose = require('mongoose')
 
 class ConversationController {
     constructor(io) {
@@ -48,6 +50,18 @@ class ConversationController {
 
         const {userId} = req.params;
         const {userFriendId} = req.body;
+        // var myId = JSON.parse(userI);
+
+
+        // var objectId = mongoose.Types.ObjectId(myId);
+        // console.log(objectId);
+
+        // const idSelt = new ObjectId(userId.trim());
+        // console.log(typeof idSelt);
+        // const idUserFren = new ObjectId(userFriendId);
+        // console.log(typeof idUserFren);
+
+        
 
         const userSelt = await redisDb.client.get(''+userId).then((data)=>{
             return JSON.parse(data)
@@ -59,6 +73,30 @@ class ConversationController {
         }).catch((err)=>{
             console.log(err);
         });
+
+
+
+
+        // var myId = JSON.parse(userSelt.uid);
+        // console.log("id"+_eid);
+        
+        
+        // let myid =userSelt.uid;
+        // let idd = myid.slice( 0, -4 ) ;
+        // const objectId = new  ObjectId(idd);
+        // console.log("ob"+objectId);
+        
+        // var objectId = mongoose.Types.ObjectId(idd);
+        // console.log(objectId);
+
+        
+        // const idUserFren = new ObjectId(userFriend.uid);
+        // console.log(typeof idUserFren);
+
+        // console.log(idSelt,idUserFren);
+
+
+        // console.log( typeof id._id);
         const user1 ={
             userId: userSelt.uid,
             userFistName:userSelt.first_name,

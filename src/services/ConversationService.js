@@ -5,6 +5,7 @@ const Message = require('../models/Message');
 const commonUtils = require('../utils/commonUtils');
 const ArgumentError = require('../exception/ArgumentError');
 const Friend = require('../models/Friend');
+const ObjectId = require('mongodb').ObjectId;
 
 
 
@@ -28,8 +29,13 @@ class ConversationService {
     }
 
     async updateNumberUnread(conversationId, userId) {
+        console.log(conversationId);
+
+        console.log(userId);
+        
         //update numberUnread
         const member = await Member.findOne({conversationId, userId});
+        console.log(member);
         const { lastView } = member;
         const countUnread = await Message.countUnread(lastView, conversationId);
         await member.updateOne({ $set: { numberUnread: countUnread } });
@@ -222,6 +228,7 @@ class ConversationService {
     
     // return id conversation
     async createIndividualConversation(user1, user2) {
+        console.log(user1,user2);
 
 
         // add new conversation
@@ -237,12 +244,12 @@ class ConversationService {
         // tạo 2 member
         const member1 = new Member({
             conversationId: _id,
-            userId: user1.uid,
+            userId: user1.userId,
         });
 
         const member2 = new Member({
             conversationId: _id,
-            userId: user2.uid,
+            userId: user2.userId,
         });
 
         // save
