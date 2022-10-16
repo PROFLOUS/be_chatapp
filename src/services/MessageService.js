@@ -199,7 +199,7 @@ const MessageService ={
     //thu hoi tin nhan
     reMessage:async(req, res) => {
         const {idMessage} = req.body;
-        message.findByIdAndUpdate(idMessage, {isDeleted: true}, {new: true}, function(err, messages) {
+        Message.findByIdAndUpdate(idMessage, {isDeleted: true}, {new: true}, function(err, messages) {
             console.log("Cập nhật thành công!");
         });
     },
@@ -207,7 +207,7 @@ const MessageService ={
     //xoa tin nhan
     deleteMessage:async(req, res) => {
         const {idMessage, userId} = req.body;
-        message.findByIdAndUpdate(idMessage, {$push: {deletedByUserIds: userId}}, {new: true}, function(err, messages) {
+        Message.findByIdAndUpdate(idMessage, {$push: {deletedByUserIds: userId}}, {new: true}, function(err, messages) {
             console.log("Cập nhật thành công!");
         });
     },
