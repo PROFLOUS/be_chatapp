@@ -59,7 +59,7 @@ class FriendController {
 
   // [DELETE] /:userId
   async deleteFriend(req, res) {
-    var _id = req.body.id;
+    var { _id } = req.body;
     var friendId = req.params.userId;
     try {
       await friendService.deleteFriend(_id, friendId);
@@ -72,7 +72,7 @@ class FriendController {
 
   //[DELETE]  /invites/:userId
   async deleteFriendInvite(req, res, next) {
-    var _id = req.body;
+    var { _id } = req.body;
     var userId = req.params.userId;
 
     try {
