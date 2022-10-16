@@ -195,6 +195,22 @@ const MessageService ={
             res.json(messages.reacts);
         });
     },
+        
+    //thu hoi tin nhan
+    reMessage:async(req, res) => {
+        const {idMessage} = req.body;
+        message.findByIdAndUpdate(idMessage, {isDeleted: true}, {new: true}, function(err, messages) {
+            console.log("Cập nhật thành công!");
+        });
+    },
+        
+    //xoa tin nhan
+    deleteMessage:async(req, res) => {
+        const {idMessage, userId} = req.body;
+        message.findByIdAndUpdate(idMessage, {$push: {deletedByUserIds: userId}}, {new: true}, function(err, messages) {
+            console.log("Cập nhật thành công!");
+        });
+    },
 }
 
 module.exports = MessageService;
