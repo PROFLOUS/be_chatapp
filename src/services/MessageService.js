@@ -145,8 +145,72 @@ const MessageService ={
         //     await member.updateOne({ $set: { numberUnread: countUnread } });
 
         return await Message.findById(_id);
-    }
+    },
+    //addReacts
+    addReact:async(req) => {
+        const {messId, icon, userId, imgUser, nameUser} = req.body;
+        Message.findById(messId, function(err, messages) {
+            let array = messages.reacts;
+            let checkReact = false;
+            let checkUser = false;
+            array.forEach(element => {
+                if (element.userId == userId) {
+                    let arrayReact =  element.react;
+                    arrayReact.forEach(elementReact => {
+                        if (elementReact.name == icon) {
+                            elementReact.quantity = elementReact.quantity + 1;
+                            checkReact = true;
+                        }
+                    });
+                    if(checkReact == false)
+                    {
+                        arrayReact.push({name: icon, quantity: 1});
+                    }
+                    checkUser = true;
+                }
+            });
+            if(checkUser == false)
+            {
+                array.push({react: [{name: icon, quantity: 1}], userId: userId, imgUser: imgUser, nameUser: nameUser});
+            }
+            console.log(array);
+            Message.findByIdAndUpdate(messId, {reacts: array}, {new: true}, function(err, messages) {
+                console.log("Cập nhật thành công!");
+            });
+        });
+    },
 
+    //deleteReacts
+    deleteReact:async(req) => {
+            const {messId, userId} = req.body;
+            Message.findByIdAndUpdate(messId, {$pull: {reacts: { userId: userId }}}, function(err, messages) {
+            console.log("Xóa thành công");
+        });
+    },
+
+    //getReacts
+    getReact:async(req, res) => {
+            const messId = req.params.idMessage;
+            Message.findById(messId, function(err, messages) {
+            res.json(messages.reacts);
+        });
+    },
+        
+    //thu hoi tin nhan
+    reMessage:async(req, res) => {
+        const {idMessage} = req.body;
+        Message.findByIdAndUpdate(idMessage, {isDeleted: true}, {new: true}, function(err, messages) {
+            console.log("Cập nhật thành công!");
+        });
+    },
+        
+    //xoa tin nhan
+    deleteMessage:async(req, res) => {
+        const {idMessage, userId} = req.body;
+        Message.findByIdAndUpdate(idMessage, {$push: {deletedByUserIds: userId}}, {new: true}, function(err, messages) {
+            console.log("Cập nhật thành công!");
+        });
+    },
 }
 
 module.exports = MessageService;

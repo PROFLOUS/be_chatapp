@@ -19,18 +19,7 @@ const messageSchema = new Schema({
         type: Boolean,
         default: false,
     },
-    reacts: {
-        type: [
-            {
-                userId: ObjectId,
-                type: {
-                    type: Number,
-                    enum: [0, 1, 2, 3, 4, 5, 6],
-                },
-            },
-        ],
-        default: [],
-    },
+    reacts:[],
     replyMessageId: {
         type: ObjectId,
     },
