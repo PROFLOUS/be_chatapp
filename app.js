@@ -30,15 +30,6 @@ app.use(handleErr);
 
 routes(app,io);
 
-// rd.set('ztpYIbpqoiYVDVsf0h9Clzg7QgW2',{
-//     "uid": "ztpYIbpqoiYVDVsf0h9Clzg7QgW2",
-//     "first_name": "Anh",
-//     "last_name": "Nguyen",
-//     "avatar": "",
-//     "isOnline": true,
-//     "lastLogin": null
-// })
-
 
 const port = process.env.PORT
 

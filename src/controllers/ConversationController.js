@@ -16,8 +16,11 @@ class ConversationController {
     // [GET] /:id
     async getOne(req, res, next) {
         const { id } = req.params;
-        const {page=0, size=20} = req.query;
-        const {userId} = req.body;
+        const { userId } = req.params;
+
+        var page=0;
+        var size=20;
+        // const {page=0, size=20} = req.query;
 
         try {
             const conversationService = new ConversationService();
@@ -31,8 +34,13 @@ class ConversationController {
 
     // [GET] /
     async getAll(req, res, next) {
-        let {userId} = req.body;
-        const {page=0, size=20} = req.query;
+        let userId = req.params.userId;
+        // console.log("userId");
+
+        // const {page=0, size=20} = req.query;
+        var page=0;
+        var size=20;
+        console.log(userId);
 
         try {
             const conversationService = new ConversationService();

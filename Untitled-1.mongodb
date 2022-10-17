@@ -196,6 +196,6 @@ use('test');
 // db.conversations.deleteMany({})
 // db.friendrequests.deleteMany({})
 // db.friends.deleteMany({})
-db.members.deleteMany({})
+// db.members.deleteMany({})
 // db.messages.deleteMany({})
 

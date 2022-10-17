@@ -5,13 +5,13 @@ const router = require('express').Router();
 const conversationRouter =(io)=>{
     const conversationController = new ConversationController(io);
     // get the conversationId
-    router.get('/:id', conversationController.getOne);
+    router.get('/:id/:userId', conversationController.getOne);
     // get all conversation of user
-    router.get('/', conversationController.getAll);
+
+    router.get('/list/:userId', conversationController.getAll);
 
     // create a new conversation individual
     router.post('/individuals/:userId',conversationController.createIndividualConversation);
-
     // create a new group conversation
     router.post('/groups',conversationController.createGroupConversation);
 
@@ -29,6 +29,7 @@ const conversationRouter =(io)=>{
 
     // delete group
     router.delete('/groups/:id',conversationController.deleteGroup);
+
     
     return router;
 }

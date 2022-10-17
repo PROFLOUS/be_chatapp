@@ -10,7 +10,7 @@ const conversationSchema = new Schema({
         type: String,
     },
     leaderId: {
-        type: ObjectId,
+        type: String,
     },
     lastMessageId:ObjectId,
     members: {
@@ -175,6 +175,3 @@ conversationSchema.statics.getAllConversation = async (
 const Conversation = mongoose.model('Conversation', conversationSchema);
 
 module.exports = Conversation;
-
-
-

@@ -19,10 +19,11 @@ const messageSchema = new Schema({
         type: Boolean,
         default: false,
     },
-    reacts:[],
+    reacts: [],
     replyMessageId: {
         type: ObjectId,
     },
+    deletedByUserIds: [],
     type: {
         type: String,
         enum: [

@@ -4,19 +4,19 @@ const FriendController = require('../controllers/FriendController');
 const friendRouter = (io) => {
     const friendController = new FriendController(io);
     // list friends
-    // router.get('', friendController.getListFriends);
+    router.get('/list', friendController.getListFriends);
     // accept friend request
     router.post('/:userId', friendController.acceptFriend);
     // delete friend
-    // router.delete('/:userId', friendController.deleteFriend);
+     router.delete('/:userId', friendController.deleteFriend);
     // // list invites to me
-    // router.get('/invites', friendController.getListFriendInvites);
+     router.get('/invites', friendController.getListFriendInvites);
     // //delete invite
-    // router.delete('/invites/:userId', friendController.deleteFriendInvite);
+     router.delete('/invites/:userId', friendController.deleteFriendInvite);
     // // list invites from me 
     // router.get('/invites/me', friendController.getListFriendInvitesWasSend);
     // // send friend invite
-    router.post('/invites/me/:userId', friendController.sendFriendInvite);
+     router.post('/invites/me/:userId', friendController.sendFriendInvite);
     // // list friends offer
     // router.get('/suggest', friendController.getSuggestFriends);
 

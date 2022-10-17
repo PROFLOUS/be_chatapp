@@ -7,6 +7,7 @@ const friendSchema = new Schema({
 user:[{
     userId: {
         type: String,
+
         required: true
       },
       userFistName: {
@@ -36,7 +37,7 @@ friendSchema.statics.existsByIds = async(userId1, userId2) =>{
 //check userId
 friendSchema.statics.checkByIds = async (userId1,userId2,message = 'Friend') => {
   const isExists = await Friend.findOne({
-      userId: { $all: [userId1, userId2] },
+      "user.userId": { $all: [userId1, userId2] },
   });
 
   if (!isExists) throw new NotFoundError(message);
@@ -44,7 +45,7 @@ friendSchema.statics.checkByIds = async (userId1,userId2,message = 'Friend') => 
 
 friendSchema.statics.deleteByIds = async (userId1,userId2,message = 'Friend') => {
   const rs = await Friend.deleteOne({
-      userId: { $all: [userId1, userId2] },
+      "user.userId": { $all: [userId1, userId2] },
   });
 
   const { deletedCount } = rs;

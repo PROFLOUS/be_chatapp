@@ -7,70 +7,7 @@ const Member = require('../models/Member');
 const awsS3Service = require('../services/awsS3Service');
 const MessageService ={
 
-    //get list messages of conversationId
-    // getList:async(conversationId,userId,page,size)=>{
-    //     if (!conversationId || !userId || !size || page < 0 || size <= 0)
-    //         throw new ArgumentError();
 
-    //     const conversation = await Conversation.getByIdAndUserId(
-    //         conversationId,
-    //         userId
-    //     );
-    //     //tong so message
-    //     const totalMessages =
-    //         await Message.countDocumentsByConversationIdAndUserId(
-    //             conversationId,
-    //             userId
-    //         );
-    //     //phan trang
-    //     const { skip, limit, totalPages } = commonUtils.getPagination(
-    //         page,
-    //         size,
-    //         totalMessages
-    //     );
-    //     //lay danh sach message
-    //     let messages;
-        
-    //     //neu conversation la group
-    //     if (conversation.type) {
-    //         const messagesTempt =
-    //             await Message.getListByConversationIdAndUserIdOfGroup(
-    //                 conversationId,
-    //                 userId,
-    //                 skip,
-    //                 limit
-    //             );
-
-    //         messages = messagesTempt.map((messageEle) =>
-    //             messageUtils.convertMessageOfGroup(messageEle)
-    //         );
-            
-    //     } else {
-    //         const messagesTempt =
-    //             await Message.getListByConversationIdAndUserIdOfIndividual(
-    //                 conversationId,
-    //                 userId,
-    //                 skip,
-    //                 limit
-    //             );
-    //         messages = messagesTempt.map((messageEle) =>
-    //             messageUtils.convertMessageOfIndividual(messageEle)
-    //         );
-    //     }
-
-    //     // await lastViewService.updateLastViewOfConversation(
-    //     //     conversationId,
-    //     //     userId
-    //     // );
-
-    //     return {
-    //         data: messages,
-    //         page,
-    //         size,
-    //         totalPages,
-    //     };
-        
-    // },
 
     // send text
     addText:async(message, userId) => {
