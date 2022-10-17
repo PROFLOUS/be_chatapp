@@ -17,6 +17,7 @@ class ConversationService {
         let firstName = '';
         let lastName = '';
         let avatar ;
+        let userIdFriend;
         for(const conTmp of cons){
             const {members,_id} = conTmp;
             const {userFistName,userLastName,avaUser} = members;
@@ -24,8 +25,9 @@ class ConversationService {
             firstName = userFistName;
             lastName=userLastName;
             avatar = avaUser;
+            userIdFriend=members.userId;
         }
-        return {firstName,lastName,avatar};
+        return {firstName,lastName,avatar,userIdFriend};
     }
 
     async updateNumberUnread(conversationId, userId) {

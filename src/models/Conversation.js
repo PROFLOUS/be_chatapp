@@ -146,6 +146,7 @@ conversationSchema.statics.getAllConversation = async (
          {
              $project: {
                  lastMessage: {
+                    userId: 1,
                      content: 1,
                      type: 1,
                      updatedAt: 1,
