@@ -30,9 +30,7 @@
 //     }
 // };
 
-const socket =(io)=>{
-
-}
+const socket = (io) => {};
 // const socket = (io) => {
 //     io.on('connect', (socket) => {
 //         socket.on('disconnect', () => {

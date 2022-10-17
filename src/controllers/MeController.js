@@ -1,8 +1,6 @@
-const meService = require('../services/MeService');
+const meService = require("../services/MeService");
 
 //me
-class MeController {
-    
-}
+class MeController {}
 
 module.exports = MeController;

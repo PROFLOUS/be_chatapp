@@ -1,28 +1,28 @@
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 
 const stickerSchema = new Schema({
   name: {
     type: String,
-    required: true
+    required: true,
   },
   qty: {
     type: Number,
-    required: true
+    required: true,
   },
   sticker_elements: {
     type: [String],
-    default: []
+    default: [],
   },
   isDowload: {
     type: Boolean,
-    default: false
+    default: false,
   },
   userId: {
     type: ObjectId,
-    required: true
-  }
+    required: true,
+  },
 });
 
-module.exports = mongoose.model('Sticker', stickerSchema);
+module.exports = mongoose.model("Sticker", stickerSchema);

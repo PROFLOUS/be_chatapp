@@ -7,6 +7,7 @@ const friendSchema = new Schema({
     {
       userId: {
         type: String,
+
         required: true,
       },
       userFistName: {
@@ -57,7 +58,7 @@ friendSchema.statics.deleteByIds = async (
   });
 
   const { deletedCount } = rs;
-  if (deletedCount === 0) throw new Error();
+  if (deletedCount === 0) throw new NotFoundError(message);
 };
 
 const Friend = mongoose.model("Friend", friendSchema);
