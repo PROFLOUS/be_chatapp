@@ -145,7 +145,7 @@ const MessageService ={
         //     await member.updateOne({ $set: { numberUnread: countUnread } });
 
         return await Message.findById(_id);
-    }
+    },
     //addReacts
     addReact:async(req) => {
         const {messId, icon, userId, imgUser, nameUser} = req.body;
