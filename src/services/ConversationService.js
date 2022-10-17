@@ -14,6 +14,7 @@ class ConversationService {
     let firstName = "";
     let lastName = "";
     let avatar;
+    let userIdFriend;
     for (const conTmp of cons) {
       const { members, _id } = conTmp;
       const { userFistName, userLastName, avaUser } = members;
@@ -21,7 +22,22 @@ class ConversationService {
       firstName = userFistName;
       lastName = userLastName;
       avatar = avaUser;
+      userIdFriend = members.userId;
     }
+    return { firstName, lastName, avatar, userIdFriend };
+  }
+
+  async updateNumberUnread(conversationId, userId) {
+    console.log(conversationId);
+
+    console.log(userId);
+
+    //update numberUnread
+    const member = await Member.findOne({ conversationId, userId });
+    console.log(member);
+    const { lastView } = member;
+    const countUnread = await Message.countUnread(lastView, conversationId);
+    await member.updateOne({ $set: { numberUnread: countUnread } });
     return { firstName, lastName, avatar };
   }
 
