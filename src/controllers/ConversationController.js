@@ -16,7 +16,8 @@ class ConversationController {
     // [GET] /:id
     async getOne(req, res, next) {
         const { id } = req.params;
-        const { userId } = req.params;
+        // const { userId } = req.params;
+        const userId = req.query.receiverId;
 
         var page=0;
         var size=20;
@@ -34,7 +35,8 @@ class ConversationController {
 
     // [GET] /
     async getAll(req, res, next) {
-        let userId = req.params.userId;
+        // let userId = req.params.userId;
+        const userId = req.query.id;
         // console.log("userId");
 
         // const {page=0, size=20} = req.query;

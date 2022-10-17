@@ -5,10 +5,10 @@ const router = require('express').Router();
 const conversationRouter =(io)=>{
     const conversationController = new ConversationController(io);
     // get the conversationId
-    router.get('/:id/:userId', conversationController.getOne);
+    router.get('/:id', conversationController.getOne);
     // get all conversation of user
 
-    router.get('/list/:userId', conversationController.getAll);
+    router.get('/list', conversationController.getAll);
 
     // create a new conversation individual
     router.post('/individuals/:userId',conversationController.createIndividualConversation);
