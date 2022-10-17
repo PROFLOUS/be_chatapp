@@ -93,7 +93,7 @@ const FriendService = {
     const num = await Conversation.aggregate([
       {
         $match: {
-          "members.userId": { $all: [ObjectId(_id), ObjectId(senderId)] },
+          "members.userId": { $all: [_id, senderId] },
         },
       },
       {
