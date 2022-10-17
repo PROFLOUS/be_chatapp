@@ -46,7 +46,7 @@ friendReqSchema.statics.deleteByIds = async (
     receiverId: receiverId,
   });
 
-  const { deletedCount } = rs;
+  const deletedCount = rs;
   if (deletedCount === 0) throw new NotFoundError(message);
 };
 

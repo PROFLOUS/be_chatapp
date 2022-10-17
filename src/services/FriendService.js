@@ -4,11 +4,33 @@ const ConversationService = require("./ConversationService");
 const Conversation = require("../models/Conversation");
 const MyError = require("../exception/MyError");
 const { findOneAndDelete } = require("../models/Friend");
-const MeService = require("./MeService");
+const MeService = require("./CommonService");
 const ObjectId = require("mongoose").Types.ObjectId;
 
 const FriendService = {
-  getList: async (_id, name) => {
+  searchFriend: async (_id, name) => {
+    // console.log("userid", _id);
+    const friend = await Friend.aggregate([
+      { $match: { $text: { $search: name }, "user.userId": { $in: [_id] } } },
+      {
+        $unwind: "$user",
+      },
+      {
+        $replaceWith: "$user",
+      },
+      {
+        $match: { userId: { $ne: _id } },
+      },
+      {
+        $project: {
+          _id: 0,
+        },
+      },
+    ]);
+    return friend;
+  },
+
+  getList: async (_id) => {
     const friend = await Friend.aggregate([
       {
         $project: {
@@ -21,7 +43,7 @@ const FriendService = {
       },
       {
         $match: {
-          "user.userId": ObjectId(_id),
+          "user.userId": _id,
         },
       },
       {
@@ -31,10 +53,7 @@ const FriendService = {
         $replaceWith: "$user",
       },
       {
-        $match: { userId: { $ne: ObjectId(_id) } },
-      },
-      {
-        $match: { userLastName: { $regex: name, $options: "i" } },
+        $match: { userId: { $ne: _id } },
       },
     ]);
     return friend;
@@ -127,7 +146,7 @@ const FriendService = {
   getListInvite: async (_id) => {
     const listInviteId = await FriendReq.aggregate([
       {
-        $match: { receiverId: ObjectId(_id) },
+        $match: { receiverId: _id },
       },
       { $project: { _id: 0, senderId: 1 } },
     ]);
