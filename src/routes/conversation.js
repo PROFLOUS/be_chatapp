@@ -8,7 +8,7 @@ const conversationRouter =(io)=>{
     router.get('/:id', conversationController.getOne);
     // get all conversation of user
 
-    router.get('/list', conversationController.getAll);
+    router.get('/user/:userId', conversationController.getAll);
 
     // create a new conversation individual
     router.post('/individuals/:userId',conversationController.createIndividualConversation);
