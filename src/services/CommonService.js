@@ -25,12 +25,13 @@ const MeService = {
 
     var numCommon = 0;
     for (const numOfGroup of num) {
-      if (num.length == 0) {
+      if (num.length < 0) {
         numCommon = 0;
       } else {
         numCommon = numOfGroup.numCommonGroup;
       }
     }
+    console.log("numOfGroup", num.length);
     console.log("num" + numCommon);
     return numCommon;
   },

@@ -24,12 +24,12 @@ class FriendController {
           ...friend,
           numCommonGroup: await MeService.getNumberCommonGroup(
             userId,
-            friend.id
+            friend.userId
           ),
 
           numCommonFriend: await MeService.getNumberCommonFriend(
             userId,
-            friend.id
+            friend.userId
           ),
         };
 
@@ -54,12 +54,12 @@ class FriendController {
           ...friend,
           numCommonGroup: await MeService.getNumberCommonGroup(
             userId,
-            friend.id
+            friend.userId
           ),
 
           numCommonFriend: await MeService.getNumberCommonFriend(
             userId,
-            friend.id
+            friend.userId
           ),
         };
 
