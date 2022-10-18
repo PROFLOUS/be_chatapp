@@ -6,6 +6,7 @@ const MyError = require("../exception/MyError");
 const { findOneAndDelete } = require("../models/Friend");
 const MeService = require("./CommonService");
 const ObjectId = require("mongoose").Types.ObjectId;
+const FirebaseService = require("./FirebaseService");
 
 const FriendService = {
   searchFriend: async (_id, name) => {
@@ -154,6 +155,10 @@ const FriendService = {
     const listInviteResult = [];
     for (const listInvite of listInviteId) {
       var inviteId = listInvite.senderId;
+      const array = await FirebaseService.getById(_id).then((result) => {
+        return result.data();
+      });
+      console.log("usreFirebase", array);
       // var numCommonGroup =0;
       //var numGroup = await MeService.getNumberCommonGroup(_id,inId)
       const invite = {
@@ -165,6 +170,7 @@ const FriendService = {
           _id,
           listInvite.senderId
         ),
+        ...array,
       };
       listInviteResult.push(invite);
       console.log("senderID" + listInvite.senderId);
