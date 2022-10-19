@@ -55,6 +55,19 @@ class ConversationController {
 
     }
 
+    async checkConversation(req, res, next) {
+        const senderID = req.params.userId;
+        const receiverID = req.params.friendId;
+        const conversationService = new ConversationService();
+
+        try {
+            const conversation = await conversationService.checkConversation(senderID, receiverID);
+            res.json(conversation);
+        }catch (err) {
+            next(err);
+        }
+    }
+
     // [POST] /individuals/:userId
     async createIndividualConversation(req, res, next) {
 

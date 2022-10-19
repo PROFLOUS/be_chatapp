@@ -78,10 +78,10 @@ use('test');
 // ])
 
 
-// db.conversations.find({
-//     "members.userId":{$in:[ObjectId("63181c892499351136c9da51")]}
-// },{_id:1,name:1,avatar:1,lastMessageId:1},
-// )
+db.conversations.find({
+    "members.userId":{$all:["Ix7UVDUIrmRYOB6uGFc715drn2H4","ztpYIbpqoiYVDVsf0h9Clzg7QgW2"]}
+}
+)
 
 // db.messages.countDocuments({
 //     createdAt: { $gt: "2022-09-13T18:48:25.449+00:00" },
@@ -99,64 +99,64 @@ use('test');
 //     "conversationId":ObjectId("63214e5ff15b81ae2fce55f4")
 // })
 
-db.conversations.aggregate([
-    {
-        $match: {
-            "members.userId":{$in:["ztpYIbpqoiYVDVsf0h9Clzg7QgW2"]}
-        },
-    },
-    {
-        $lookup: {
-            from: 'messages',
-            localField: 'lastMessageId',
-            foreignField: '_id',
-            as: 'lastMessage',
-        },
-    },
-    {
-        $lookup: {
-            from: 'members',
-            localField: '_id',
-            foreignField: 'conversationId',
-            as: 'mb',
-        },
-    },
-    {
-       $match: {
-            "mb.userId":"ztpYIbpqoiYVDVsf0h9Clzg7QgW2"
-        },
-    },
-    {
-      $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$mb", 0 ] }, "$$ROOT" ] } }
-    },
-    { $project: { mb: 0 } },
-    {
-        $project: {
-            name: 1,
-            avatar: 1,
-            lastMessage: {
-                userId: 1,
-                content: 1,
-                type: 1,
-                updatedAt: 1,
-            },
-            numberUnread: 1,
-            type: 1,
-        }
-    },
-    {
-      $sort: {
-        "lastMessage.updatedAt": -1,
-      },
-    },
-    {
-        $skip: 0,
-    },
-    {
-        $limit: 20,
-    },
+// db.conversations.aggregate([
+//     {
+//         $match: {
+//             "members.userId":{$in:["ztpYIbpqoiYVDVsf0h9Clzg7QgW2"]}
+//         },
+//     },
+//     {
+//         $lookup: {
+//             from: 'messages',
+//             localField: 'lastMessageId',
+//             foreignField: '_id',
+//             as: 'lastMessage',
+//         },
+//     },
+//     {
+//         $lookup: {
+//             from: 'members',
+//             localField: '_id',
+//             foreignField: 'conversationId',
+//             as: 'mb',
+//         },
+//     },
+//     {
+//        $match: {
+//             "mb.userId":"ztpYIbpqoiYVDVsf0h9Clzg7QgW2"
+//         },
+//     },
+//     {
+//       $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$mb", 0 ] }, "$$ROOT" ] } }
+//     },
+//     { $project: { mb: 0 } },
+//     {
+//         $project: {
+//             name: 1,
+//             avatar: 1,
+//             lastMessage: {
+//                 userId: 1,
+//                 content: 1,
+//                 type: 1,
+//                 updatedAt: 1,
+//             },
+//             numberUnread: 1,
+//             type: 1,
+//         }
+//     },
+//     {
+//       $sort: {
+//         "lastMessage.updatedAt": -1,
+//       },
+//     },
+//     {
+//         $skip: 0,
+//     },
+//     {
+//         $limit: 20,
+//     },
     
-])
+// ])
 
 // db.conversations.countDocuments({
 //     "members.userId":{$in:[ObjectId("63181c892499351136c9da51")]}

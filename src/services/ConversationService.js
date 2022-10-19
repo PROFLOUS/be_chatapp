@@ -227,6 +227,16 @@ class ConversationService {
         }
 
     }
+
+    async checkConversation(senderID,receiverID){
+        const conversation = await Conversation.findOne({
+            "members.userId":{$all:[senderID,receiverID]},
+        })
+        if(conversation){
+            return conversation._id;
+        }
+        return false;
+    }
     
     // return id conversation
     async createIndividualConversation(user1, user2) {
