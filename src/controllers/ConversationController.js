@@ -56,8 +56,12 @@ class ConversationController {
     }
 
     async checkConversation(req, res, next) {
-        const senderID = req.params.userId;
-        const receiverID = req.params.friendId;
+        // const senderID = req.params.userId;
+        // const receiverID = req.params.friendId;
+
+        const senderID = req.query.senderID;
+        const receiverID = req.query.receiverID;
+        
         const conversationService = new ConversationService();
 
         try {

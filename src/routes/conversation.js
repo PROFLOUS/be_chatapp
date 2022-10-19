@@ -12,7 +12,8 @@ const conversationRouter =(io)=>{
 
      // check conversation of user and friend
 
-     router.get('/user/:userId/friend/:friendId', conversationController.checkConversation);
+    //  router.get('/user/:userId/friend/:friendId', conversationController.checkConversation);
+     router.get('/', conversationController.checkConversation);
 
     // create a new conversation individual
     router.post('/individuals/:userId',conversationController.createIndividualConversation);
