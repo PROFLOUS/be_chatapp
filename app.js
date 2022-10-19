@@ -30,6 +30,15 @@ app.use(handleErr);
 
 routes(app,io);
 
+// rd.set("Ix7UVDUIrmRYOB6uGFc715drn2H4", {
+//     uid:"Ix7UVDUIrmRYOB6uGFc715drn2H4",
+//     first_name:"Cuong",
+//     last_name:"Den",
+//     avatar:"https://chatapp-bucket.s3.ap-southeast-1.amazonaws.com/zale_1665942529351_New%20Text%20Document.png",    
+//     isOnline: true,
+//     lastLogin: null,
+// });
+
 
 const port = process.env.PORT
 
