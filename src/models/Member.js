@@ -1,16 +1,15 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
-
 
 const memberSchema = new Schema({
   isNotify: {
     type: Boolean,
-    default: true
+    default: true,
   },
   lastView: {
     type: Date,
-    default: Date.now()
+    default: Date.now(),
   },
   numberUnread: {
     type: Number,
@@ -21,7 +20,7 @@ const memberSchema = new Schema({
   },
   conversationId: {
     type: ObjectId,
-  }
+  },
 });
 
-module.exports = mongoose.model('Member', memberSchema);
+module.exports = mongoose.model("Member", memberSchema);

@@ -1,121 +1,114 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 
-const messageSchema = new Schema({
+const messageSchema = new Schema(
+  {
     userId: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     content: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     conversationId: {
-        type: ObjectId,
-        required: true
+      type: ObjectId,
+      required: true,
     },
     isDeleted: {
-        type: Boolean,
-        default: false,
+      type: Boolean,
+      default: false,
     },
+
     reacts: [],
+
     replyMessageId: {
-        type: ObjectId,
+      type: ObjectId,
     },
+
     deletedByUserIds: [],
     type: {
-        type: String,
-        enum: [
-            'TEXT',
-            'IMAGE',
-            'STICKER',
-            'VIDEO',
-            'FILE',
-            'HTML',
-            'NOTIFY',
-        ],
-        require: true,
+      type: String,
+      enum: ["TEXT", "IMAGE", "STICKER", "VIDEO", "FILE", "HTML", "NOTIFY"],
+      require: true,
     },
     createdAt: Date,
     updatedAt: Date,
-
-
-},
-    { timestamps: true }
+  },
+  { timestamps: true }
 );
 
-//total message 
+//total message
 messageSchema.statics.countDocumentsByConversationIdAndUserId = async (
-    conversationId,
+  conversationId
 ) => {
-    const totalMessages = await Message.countDocuments({
-        conversationId,
-    });
+  const totalMessages = await Message.countDocuments({
+    conversationId,
+  });
 
-    return totalMessages;
+  return totalMessages;
 };
 //list conversation individual
 messageSchema.statics.getListByConversationIdAndUserId = async (
-    conversationId,
-    skip,
-    limit
+  conversationId,
+  skip,
+  limit
 ) => {
-    const messages = await Message.aggregate([
-        {
-            $match: {
-                conversationId: ObjectId(conversationId),
-            },
-        },
-        {
-            $lookup: {
-                from: 'messages',
-                localField: 'replyMessageId',
-                foreignField: '_id',
-                as: 'replyMessage',
-            },
-        },
-        {
-            $group:{
-                _id: "$conversationId",
-                messages: {
-                    $push: {
-                        _id: "$_id",
-                        userId: "$userId",
-                        content: "$content",
-                        createdAt: "$createdAt",
-                        isDeleted: "$isDeleted",
-                        reacts:"$reacts",
-                        replyMessageId: "$replyMessage",
-                        createdAt: "$createdAt",
-                        type: "$type",
-                    },
-                },
-            },
-        },{
-            $project: {
-                _id: 0,
-                messages: 1,
-            },
-        },
-        {
-            $skip: skip,
-        },
-        {
-            $limit: limit,
-        },
-        
-    ]);
-    return messages;
+  const messages = await Message.aggregate([
+    {
+      $match: {
+          conversationId: ObjectId(conversationId),
+      },
+  },
+  {
+      $lookup: {
+          from: 'messages',
+          localField: 'replyMessageId',
+          foreignField: '_id',
+          as: 'replyMessage',
+      },
+  },
+  {
+      $group:{
+          _id: "$conversationId",
+          messages: {
+              $push: {
+                  _id: "$_id",
+                  userId: "$userId",
+                  content: "$content",
+                  createdAt: "$createdAt",
+                  isDeleted: "$isDeleted",
+                  reacts:"$reacts",
+                  replyMessageId: "$replyMessage",
+                  createdAt: "$createdAt",
+                  type: "$type",
+              },
+          },
+      },
+  },{
+      $project: {
+          _id: 0,
+          messages: 1,
+      },
+  },
+  {
+      $skip: 0,
+  },
+  {
+      $limit: 20,
+  },
+  ]);
+  return messages;
 };
 
 messageSchema.statics.countUnread = async (time, conversationId) => {
-    return await Message.countDocuments({
-        createdAt: { $gt: time },
-        conversationId,
-    });
+  return await Message.countDocuments({
+    createdAt: { $gt: time },
+    conversationId,
+  });
 };
 
-const Message = mongoose.model('Message', messageSchema);
+const Message = mongoose.model("Message", messageSchema);
 
 module.exports = Message;

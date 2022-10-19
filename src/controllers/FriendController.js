@@ -1,4 +1,5 @@
 const friendService = require("../services/FriendService");
+const MeService = require("../services/CommonService");
 
 class FriendController {
   constructor(io) {
@@ -10,15 +11,57 @@ class FriendController {
     // this.deleteInviteWasSend = this.deleteInviteWasSend.bind(this);
   }
 
-  // [GET] /list
-  async getListFriends(req, res, next) {
-    const {id} = req.body;
+  // [GET] /list/:userId
+  async searchFriends(req, res, next) {
+    const { userId } = req.params;
     const { name = "" } = req.query;
+    console.log("id", userId);
     try {
-      const friends = await friendService.getList(id, name);
+      const friends = await friendService.searchFriend(userId, name);
       const listFriend = [];
       for (const friend of friends) {
-        const fiendResult = { ...friend };
+        const fiendResult = {
+          ...friend,
+          numCommonGroup: await MeService.getNumberCommonGroup(
+            userId,
+            friend.userId
+          ),
+
+          numCommonFriend: await MeService.getNumberCommonFriend(
+            userId,
+            friend.userId
+          ),
+        };
+
+        listFriend.push(fiendResult);
+        console.log("friend :" + fiendResult.userId);
+      }
+      res.json(listFriend);
+      console.log(listFriend);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getListFriends(req, res, next) {
+    const { userId } = req.params;
+    console.log("id", userId);
+    try {
+      const friends = await friendService.getList(userId);
+      const listFriend = [];
+      for (const friend of friends) {
+        const fiendResult = {
+          ...friend,
+          numCommonGroup: await MeService.getNumberCommonGroup(
+            userId,
+            friend.userId
+          ),
+
+          numCommonFriend: await MeService.getNumberCommonFriend(
+            userId,
+            friend.userId
+          ),
+        };
 
         listFriend.push(fiendResult);
         console.log("friend :" + fiendResult.userId);
@@ -59,10 +102,10 @@ class FriendController {
 
   // [DELETE] /:userId
   async deleteFriend(req, res) {
-    var { _id } = req.body;
-    var friendId = req.params.userId;
+    var { id = "" } = req.body;
+    var { friendId = "" } = req.params;
     try {
-      await friendService.deleteFriend(_id, friendId);
+      await friendService.deleteFriend(id, friendId);
       // this.io.to(friendId).emit('deleteFriend',_id);
       return res.status(200).json();
     } catch (error) {
@@ -72,11 +115,11 @@ class FriendController {
 
   //[DELETE]  /invites/:userId
   async deleteFriendInvite(req, res, next) {
-    var { _id } = req.body;
-    var userId = req.params.userId;
+    var { id } = req.body;
+    var { userId } = req.params;
 
     try {
-      await friendService.deleteFriendInvite(_id, userId);
+      await friendService.deleteFriendInvite(id, userId);
       // this.io.to(userId + '').emit('deleted-friend-invite', _id);
 
       res.status(204).json();
@@ -87,10 +130,11 @@ class FriendController {
   }
   // [POST] /invites/me/:userId
   async sendFriendInvite(req, res, next) {
-    const _id = req.body.id;
+    const { id = "" } = req.body;
+    console.log("iduser", id);
     const userId = req.params.userId;
     try {
-      await friendService.sendFriendInvite(_id, userId);
+      await friendService.sendFriendInvite(id, userId);
 
       // const { name, avatar } = await redisDb.get(_id);
       // this.io
@@ -104,9 +148,9 @@ class FriendController {
     }
   }
   async getListFriendInvites(req, res, next) {
-    const _id = req.body;
+    const { userId } = req.params;
     try {
-      const friendInvite = await friendService.getListInvite(_id);
+      const friendInvite = await friendService.getListInvite(userId);
       res.json(friendInvite);
     } catch (error) {
       next(error);
