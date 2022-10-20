@@ -13,6 +13,9 @@ const connectDB = require('./src/config/connectDB')
 const app = express()
 const useragent = require('express-useragent');
 const rd = require('./src/app/redis');
+const fs = require('fs');
+
+const file =fs.readFileSync('./BF086B07CE81DC8267A25EE61C70F337.txt')
 // Connect to MongoDB
 connectDB()
 
@@ -28,7 +31,11 @@ const io = socketio(server);
 socket(io);
 app.use(handleErr);
 
-routes(app,io);
+app.get('/.well-known/pki-validation/BF086B07CE81DC8267A25EE61C70F337.txt', (req, res) =>{
+    res.sendFile("/home/ec2-user/be-chatapp/BF086B07CE81DC8267A25EE61C70F337.txt");
+})
+
+// routes(app,io);
 
 // rd.set("Ix7UVDUIrmRYOB6uGFc715drn2H4", {
 //     uid:"Ix7UVDUIrmRYOB6uGFc715drn2H4",
@@ -42,7 +49,7 @@ routes(app,io);
 
 const port = process.env.PORT
 
-server.listen(port, () => {
+app.listen(port, () => {
     console.log('Example app listening on http://localhost:'+port)
     }
 )
