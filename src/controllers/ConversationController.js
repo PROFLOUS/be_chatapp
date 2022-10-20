@@ -67,13 +67,9 @@ class ConversationController {
 
         try {
             const conversation = await conversationService.checkConversation(senderID, receiverID);
-            if(conversation){
                 res.json(conversation);
-            }else{
-                throw new NotFoundError('Conversation not found');
-            }
         }catch (err) {
-            next(err);
+            throw new Exception(err);
         }
     }
 
