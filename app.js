@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors');
 const http = require('http');
+const https = require('https');
 
 const socketio = require('socket.io');
 const socket = require('./src/app/socket');
@@ -15,7 +16,13 @@ const useragent = require('express-useragent');
 const rd = require('./src/app/redis');
 const fs = require('fs');
 
-const file =fs.readFileSync('./BF086B07CE81DC8267A25EE61C70F337.txt')
+const key =fs.readFileSync('private.key');
+const cert =fs.readFileSync('certificate.crt');
+
+const cred ={
+    key,
+    cert
+}
 // Connect to MongoDB
 connectDB()
 
@@ -26,16 +33,18 @@ app.use(morgan("common"));
 
 
 
-const server = http.createServer(app);
+// const server = http.createServer(app);
+// const io = socketio(server);
+
+const server = https.createServer(cred,app);
 const io = socketio(server);
+
+
+
 socket(io);
 app.use(handleErr);
 
-app.get('/.well-known/pki-validation/BF086B07CE81DC8267A25EE61C70F337.txt', (req, res) =>{
-    res.sendFile("/home/ec2-user/be-chatapp/BF086B07CE81DC8267A25EE61C70F337.txt");
-})
-
-// routes(app,io);
+routes(app,io);
 
 // rd.set("Ix7UVDUIrmRYOB6uGFc715drn2H4", {
 //     uid:"Ix7UVDUIrmRYOB6uGFc715drn2H4",
@@ -49,7 +58,7 @@ app.get('/.well-known/pki-validation/BF086B07CE81DC8267A25EE61C70F337.txt', (req
 
 const port = process.env.PORT
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log('Example app listening on http://localhost:'+port)
     }
 )
