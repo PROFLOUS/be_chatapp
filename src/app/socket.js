@@ -48,31 +48,37 @@ const getListUserOnline = async (userId, cb) => {
 };
 
 const socket = (io) => {
-  io.on("connect", (socket) => {
+  io.on("connection", (socket) => {
     console.log(socket.id + " Connected");
+    console.log(socket);
+    io.emit("welcome", "Welcome to chat app");
+
 
     socket.on("disconnect", () => {
       const userId = socket.userId;
+      console.log(socket.id + "Disconnected");
       if (userId) handleEnd(userId);
     });
 
-    socket.on("start", (user) => {
-      const { uid } = user;
-      socket.uid = uid;
-      socket.join(uid);
-      handleStart(user);
-    });
+    // socket.on("start", (user) => {
+    //   const { uid } = user;
+    //   socket.userId = uid;
+    //   socket.join(uid);
+    //   handleStart(user);
+    // });
 
-    socket.on("join-conversations", (conversationIds) => {
-      conversationIds.forEach((id) => socket.join(id));
-    });
+    
 
-    socket.on("send-message", (senderId, conversationId, message) => {
-      console.log("messSoc" + message);
-      io.to(conversationId).emit("get-message", conversationId, message);
-      console.log("getSoc" + message);
+    // socket.on("join-conversations", (conversationIds) => {
+    //   conversationIds.forEach((id) => socket.join(id));
+    // });
 
-    });
+    // socket.on("send-message", (senderId, conversationId, message) => {
+    //   console.log("messSoc" + message);
+    //   io.to(conversationId).emit("get-message", conversationId, message);
+    //   console.log("getSoc" + message);
+
+    // });
   });
 };
 

@@ -37,7 +37,11 @@ app.use(morgan("common"));
 // const io = socketio(server);
 
 const server = https.createServer(cred,app);
-const io = socketio(server);
+const io = socketio(server,{
+    cors:{
+        origin:"http://localhost:3000",
+    }
+});
 
 
 
