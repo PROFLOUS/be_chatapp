@@ -30,13 +30,15 @@ class MessageController {
 
   //[POST] /text  tin nhắn dạng text
   async addText(req, res, next) {
-    const { userId } = req.body;
+    const { userId,conversationId } = req.body;
+
 
     try {
       // const { conversationId } = req.body;
       const message = await messageService.addText(req.body, userId);
 
-      // this.io.to(conversationId+'').emit('send-message',conversationId, message);
+      // this.io.to(conversationId).emit('new_Mess', message);
+      // console.log("send"+message);
 
       res.status(201).json(message);
     } catch (err) {

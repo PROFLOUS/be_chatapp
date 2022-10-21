@@ -147,7 +147,7 @@ class ConversationService {
         }
     }
 
-    async getAllConversation(userId,page, size){
+    async getAllConversation(userId,page=0, size=20){
         if (!userId || !size || page < 0 || size <= 0)
             throw new ArgumentError();
 

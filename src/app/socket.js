@@ -1,5 +1,6 @@
 // const redisService = require('../services/redisService');
 const redisDb = require("../app/redis");
+const ConversationService = require('../services/ConversationService');
 
 const handleStart = async (user) => {
   const { uid, first_name, last_name, avatar } = user;
@@ -47,36 +48,69 @@ const getListUserOnline = async (userId, cb) => {
   }
 };
 
+
+
+let users =[];
+
+const addUsers = (userId,soketId) => {
+  !users.some((user) => user.userId === userId) &&
+    users.push({ userId, soketId });
+};
+
+const removeUser = (soketId) => {
+  users = users.filter((user) => user.soketId !== soketId);
+}
+
+const getUser = (userId) => {
+  return users.find((user) => user.userId === userId);
+}
+
 const socket = (io) => {
   io.on("connection", (socket) => {
     console.log(socket.id + " Connected");
 
+    socket.on("add-user", (userId) => {
+      addUsers(userId,socket.id);
+      io.emit("get-users",users);
+    });
+
+    socket.on("send-message",async ({senderId,receiverId,message}) => {
+      const user = getUser(receiverId);
+      io.to(user.soketId).emit("get-message",{senderId,message});
+      const conversationService = new ConversationService();
+      const listCon = await conversationService.getAllConversation(senderId);
+      io.emit("get-last-message",listCon.data);
+
+      
+    });
+
+
 
     socket.on("disconnect", () => {
       const userId = socket.userId;
-      console.log(socket.id + "Disconnected");
+      console.log(socket.id + " Disconnected");
+      removeUser(socket.id);
       if (userId) handleEnd(userId);
     });
 
-    // socket.on("start", (user) => {
-    //   const { uid } = user;
-    //   socket.userId = uid;
-    //   socket.join(uid);
-    //   handleStart(user);
-    // });
+    socket.on("start", (user) => {
+      const { uid } = user;
+      // socket.userId = uid;
+      // socket.join(uid);
+      handleStart(user);
+    });
+
+    socket.on("join-conversations", (conversationIds) => {
+      conversationIds.forEach((id) => socket.join(id));
+      console.log("joinSuccess"+conversationIds);
+    });
+
+    socket.on("join-room", (idCon) => {
+      socket.join(idCon)
+      console.log("joinRoom"+idCon);
+    });
 
     
-
-    // socket.on("join-conversations", (conversationIds) => {
-    //   conversationIds.forEach((id) => socket.join(id));
-    // });
-
-    socket.on("send-message", (senderId, conversationId, message) => {
-      console.log("messSoc" + message);
-      io.to(conversationId).emit("get-message", conversationId, message);
-      console.log("getSoc" + message);
-
-    });
   });
 };
 
