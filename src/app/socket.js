@@ -71,12 +71,12 @@ const socket = (io) => {
     //   conversationIds.forEach((id) => socket.join(id));
     // });
 
-    // socket.on("send-message", (senderId, conversationId, message) => {
-    //   console.log("messSoc" + message);
-    //   io.to(conversationId).emit("get-message", conversationId, message);
-    //   console.log("getSoc" + message);
+    socket.on("send-message", (senderId, conversationId, message) => {
+      console.log("messSoc" + message);
+      io.to(conversationId).emit("get-message", conversationId, message);
+      console.log("getSoc" + message);
 
-    // });
+    });
   });
 };
 
