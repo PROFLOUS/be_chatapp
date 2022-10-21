@@ -31,13 +31,11 @@ class ConversationService {
     }
 
     async updateNumberUnread(conversationId, userId) {
-        console.log(conversationId);
-
-        console.log(userId);
+        
         
         //update numberUnread
         const member = await Member.findOne({conversationId, userId});
-        console.log(member);
+        
         const { lastView } = member;
         const countUnread = await Message.countUnread(lastView, conversationId);
         await member.updateOne({ $set: { numberUnread: countUnread } });
@@ -80,7 +78,7 @@ class ConversationService {
         const fri= conver.map(async(con) => {
             const {members} = con;
             const freId = members.userId.toString();
-            console.log(userId,freId);
+            
             const status = await Friend.existsByIds(userId,freId);
             return status;
         });
@@ -239,7 +237,7 @@ class ConversationService {
     
     // return id conversation
     async createIndividualConversation(user1, user2) {
-        console.log(user1,user2);
+        
 
 
         // add new conversation
@@ -271,7 +269,7 @@ class ConversationService {
     }
 
     async createGroupConversation(userO,name,userList){
-        console.log(userO,userList)
+        
         var uss = userList.map((us) => us.userId);
 
         const users =[userO.userId,...uss];
@@ -352,7 +350,7 @@ class ConversationService {
         let newMessage;
         // save members
         members.forEach(async(member) => {
-            console.log(member);
+            
             const newMember = new Member({
                 conversationId,
                 userId: member.userId,

@@ -43,7 +43,7 @@ class ConversationController {
         // const {page=0, size=20} = req.query;
         var page=0;
         var size=20;
-        console.log(userId);
+        
 
         try {
             const conversationService = new ConversationService();
@@ -164,7 +164,7 @@ class ConversationController {
     async addMembers(req, res, next) {
         const {id} = req.params;
         const {members=[],userId} = req.body;
-        console.log(members);
+        
         
         const conversationService = new ConversationService();
 
@@ -207,7 +207,7 @@ class ConversationController {
 
     async deleteGroup(req, res, next) {
         const {id} = req.params;
-        console.log(id);
+        
 
         const conversationService = new ConversationService();
 
