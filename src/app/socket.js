@@ -50,8 +50,6 @@ const getListUserOnline = async (userId, cb) => {
 const socket = (io) => {
   io.on("connection", (socket) => {
     console.log(socket.id + " Connected");
-    console.log(socket);
-    io.emit("welcome", "Welcome to chat app");
 
 
     socket.on("disconnect", () => {
