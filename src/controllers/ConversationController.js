@@ -102,29 +102,6 @@ class ConversationController {
             console.log(err);
         });
 
-
-
-
-        // var myId = JSON.parse(userSelt.uid);
-        // console.log("id"+_eid);
-        
-        
-        // let myid =userSelt.uid;
-        // let idd = myid.slice( 0, -4 ) ;
-        // const objectId = new  ObjectId(idd);
-        // console.log("ob"+objectId);
-        
-        // var objectId = mongoose.Types.ObjectId(idd);
-        // console.log(objectId);
-
-        
-        // const idUserFren = new ObjectId(userFriend.uid);
-        // console.log(typeof idUserFren);
-
-        // console.log(idSelt,idUserFren);
-
-
-        // console.log( typeof id._id);
         const user1 ={
             userId: userSelt.uid,
             userFistName:userSelt.first_name,

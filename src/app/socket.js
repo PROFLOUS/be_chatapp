@@ -68,7 +68,10 @@ const socket = (io) => {
     });
 
     socket.on("send-message", (senderId, conversationId, message) => {
-      socket.to(conversationId).emit("get-message", conversationId, message);
+      console.log("messSoc" + message);
+      io.to(conversationId).emit("get-message", conversationId, message);
+      console.log("getSoc" + message);
+
     });
   });
 };
