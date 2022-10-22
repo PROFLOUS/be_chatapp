@@ -69,20 +69,18 @@ const socket = (io) => {
   io.on("connection", (socket) => {
     console.log(socket.id + " Connected");
 
-    socket.on("add-user", (userId) => {
-      addUsers(userId,socket.id);
-      io.emit("get-users",users);
-    });
+    // socket.on("add-user", (userId) => {
+    //   addUsers(userId,socket.id);
+    //   io.emit("get-users",users);
+    // });
 
-    socket.on("send-message",async ({senderId,receiverId,message}) => {
-      const user = getUser(receiverId);
-      io.to(user.soketId).emit("get-message",{senderId,message});
-      const conversationService = new ConversationService();
-      const listCon = await conversationService.getAllConversation(senderId);
-      io.emit("get-last-message",listCon.data);
-
-      
-    });
+    // socket.on("send-message",async ({senderId,receiverId,message}) => {
+    //   const user = getUser(receiverId);
+    //   io.to(user.soketId).emit("get-message",{senderId,message});
+    //   const conversationService = new ConversationService();
+    //   const listCon = await conversationService.getAllConversation(senderId);
+    //   io.emit("get-last-message",listCon.data);      
+    // });
 
 
 
@@ -105,9 +103,21 @@ const socket = (io) => {
       console.log("joinSuccess"+conversationIds);
     });
 
+    // socket.on("join-room", (idCon) => {
+    //   socket.join(idCon)
+    //   console.log("joinRoom"+idCon);
+    // });
+
     socket.on("join-room", (idCon) => {
       socket.join(idCon)
       console.log("joinRoom"+idCon);
+      socket.on("send-message",async ({senderId,receiverId,message}) => {
+        
+        io.to(idCon).emit("get-message",{senderId,message});
+        const conversationService = new ConversationService();
+        const listCon = await conversationService.getAllConversation(senderId);
+        io.emit("get-last-message",listCon.data);      
+      });
     });
 
     
