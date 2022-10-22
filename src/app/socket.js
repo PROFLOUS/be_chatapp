@@ -115,8 +115,13 @@ const socket = (io) => {
         
         io.to(idCon).emit("get-message",{senderId,message});
         const conversationService = new ConversationService();
-        const listCon = await conversationService.getAllConversation(senderId);
-        io.emit("get-last-message",listCon.data);      
+        const listConSender = await conversationService.getAllConversation(senderId);
+        const listConReceiver = await conversationService.getAllConversation(receiverId);
+
+        io.emit("get-last-message",{
+          listSender:listConSender.data,
+          listReceiver:listConReceiver.data
+        });      
       });
     });
 

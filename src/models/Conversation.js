@@ -128,16 +128,13 @@ conversationSchema.statics.getAllConversation = async (userId, skip, limit) => {
       },
     },
     {
-      $match: {
-        "mb.userId": userId,
-      },
+      $unwind: "$mb",
     },
     {
-      $replaceRoot: {
-        newRoot: { $mergeObjects: [{ $arrayElemAt: ["$mb", 0] }, "$$ROOT"] },
-      },
+      $match: {
+          "mb.userId":userId
+      }
     },
-    { $project: { mb: 0 } },
     {
       $project: {
         lastMessage: {
@@ -146,7 +143,9 @@ conversationSchema.statics.getAllConversation = async (userId, skip, limit) => {
           type: 1,
           updatedAt: 1,
         },
-        numberUnread: 1,
+        mb:{
+          numberUnread:1,
+        },
         type: 1,
       },
     },
