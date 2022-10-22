@@ -211,6 +211,15 @@ const MessageService ={
             console.log("Cập nhật thành công!");
         });
     },
+        
+    //lay tin nhan theo loai
+    getMessageByType:async(req, res) => {
+        const type = req.params.typeMessage;
+        const conversationId = req.params.conversationId;
+        Message.find({type: type, conversationID: conversationId}, function(err, messages) {
+            res.json(messages);
+        });
+    },
 }
 
 module.exports = MessageService;
