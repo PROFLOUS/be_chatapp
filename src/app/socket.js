@@ -139,7 +139,7 @@ const socket = (io) => {
       socket.join(idCon)
       console.log("joinRoom"+idCon);
       socket.on("send-message",async ({senderId,receiverId,message}) => {
-        console.log("messSend"+message);
+        console.log({message});
         io.to(idCon).emit("get-message",{senderId,message});
         const conversationService = new ConversationService();
         const listConSender = await conversationService.getAllConversation(senderId);
