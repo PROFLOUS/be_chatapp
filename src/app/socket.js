@@ -1,18 +1,39 @@
 // const redisService = require('../services/redisService');
 const redisDb = require("../app/redis");
 const ConversationService = require('../services/ConversationService');
+const LastMessageService = require('../services/LastMesageService');
 
 const handleStart = async (user) => {
   const { uid, first_name, last_name, avatar } = user;
-
-  await redisDb.set(uid, {
-    uid,
-    first_name,
-    last_name,
-    avatar,
-    isOnline: true,
-    lastLogin: null,
-  });
+  // const cachedUser = await redisDb.client.get(''+uid).then((data)=>{
+  //   return JSON.parse(data)
+  // }).catch((err)=>{
+  //   console.log(err);
+  // });
+  // if(cachedUser){
+  //   await redisDb.set(uid, {
+  //     ...cachedUser,
+  //     isOnline: true,
+  //     lastLogin: new Date(),
+  //   });
+  // }else{
+    await redisDb.set(uid, {
+      uid,
+      first_name,
+      last_name,
+      avatar,
+      isOnline: true,
+      lastLogin: new Date(),
+    });
+  // }
+  // await redisDb.set(uid, {
+  //   uid,
+  //   first_name,
+  //   last_name,
+  //   avatar,
+  //   isOnline: true,
+  //   lastLogin: null,
+  // });
   // const cachedUser = await redisDb.get(userId);
   // console.log(cachedUser);
   // if (cachedUser){
@@ -30,7 +51,11 @@ const handleStart = async (user) => {
 };
 
 const handleEnd = async (userId) => {
-  const cachedUser = await redisDb.get(userId);
+  const cachedUser = await redisDb.client.get(''+userId).then((data)=>{
+    return JSON.parse(data)
+  }).catch((err)=>{
+    console.log(err);
+  });
   if (cachedUser)
     await redisDb.set(userId, {
       ...cachedUser,
@@ -65,6 +90,8 @@ const getUser = (userId) => {
   return users.find((user) => user.userId === userId);
 }
 
+
+
 const socket = (io) => {
   io.on("connection", (socket) => {
     console.log(socket.id + " Connected");
@@ -93,8 +120,8 @@ const socket = (io) => {
 
     socket.on("start", (user) => {
       const { uid } = user;
-      // socket.userId = uid;
-      // socket.join(uid);
+      socket.userId = uid;
+      socket.join(uid);
       handleStart(user);
     });
 
@@ -112,7 +139,7 @@ const socket = (io) => {
       socket.join(idCon)
       console.log("joinRoom"+idCon);
       socket.on("send-message",async ({senderId,receiverId,message}) => {
-        
+        console.log("messSend"+message);
         io.to(idCon).emit("get-message",{senderId,message});
         const conversationService = new ConversationService();
         const listConSender = await conversationService.getAllConversation(senderId);
@@ -121,11 +148,22 @@ const socket = (io) => {
         io.emit("get-last-message",{
           listSender:listConSender.data,
           listReceiver:listConReceiver.data
-        });      
+        });
+        
+        
+        
       });
     });
 
-    
+    // socket.on("seen-message",async ({conversationId,userId}) => {
+    //   await LastMessageService.updateLastMessage(conversationId,userId);
+    //   console.log("seen-message");
+    //   io.emit("get-last-message",{
+    //     listSender:listConSender.data,
+    //     listReceiver:listConReceiver.data
+    //   }); 
+    // })
+     
   });
 };
 

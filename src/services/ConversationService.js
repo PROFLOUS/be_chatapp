@@ -123,7 +123,6 @@ class ConversationService {
             await Member.updateOne(
                 { conversationId, userId },
                 { $set: { lastView: new Date() } },
-
             );
             //update numberUnread
             await this.updateNumberUnread(conversationId, userId);
