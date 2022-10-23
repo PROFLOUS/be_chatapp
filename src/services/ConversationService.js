@@ -76,7 +76,7 @@ class ConversationService {
     async checkIsFriendByCon(conversationId,userId,){
         //check đã là bạn
         let status;       
-        const conver = await Conversation.getMemberByCon(conversationId,userId);
+        const conver = await Conversation.getMemberFriend(conversationId,userId);
         const fri= conver.map(async(con) => {
             const {members} = con;
             const freId = members.userId.toString();

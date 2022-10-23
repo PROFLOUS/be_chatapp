@@ -138,24 +138,22 @@ const socket = (io) => {
     socket.on("join-room", (idCon) => {
       socket.join(idCon)
       console.log("joinRoom"+idCon);
-      
-    });
-
-    socket.on("send-message",async ({senderId,receiverId,message,idCon}) => {
-      console.log({message});
-      io.to(idCon).emit("get-message",{senderId,message});
-      const conversationService = new ConversationService();
-      const listConSender = await conversationService.getAllConversation(senderId);
-      const listConReceiver = await conversationService.getAllConversation(receiverId);
-
-      io.emit("get-last-message",{
-        listSender:listConSender.data,
-        listReceiver:listConReceiver.data
+      socket.on("send-message",async ({senderId,receiverId,message,idCon}) => {
+        console.log({message});
+        io.to(idCon).emit("get-message",{senderId,message});
+        const conversationService = new ConversationService();
+        const listConSender = await conversationService.getAllConversation(senderId);
+        const listConReceiver = await conversationService.getAllConversation(receiverId);
+  
+        io.emit("get-last-message",{
+          listSender:listConSender.data,
+          listReceiver:listConReceiver.data
+        });
       });
       
-      
-      
     });
+
+    
 
     socket.on("leave-room", (idConversation) => {
       socket.leave(idConversation);
