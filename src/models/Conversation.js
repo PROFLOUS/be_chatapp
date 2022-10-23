@@ -132,8 +132,8 @@ conversationSchema.statics.getAllConversation = async (userId, skip, limit) => {
     },
     {
       $match: {
-          "mb.userId":userId
-      }
+        "mb.userId": userId,
+      },
     },
     {
       $project: {
@@ -143,8 +143,8 @@ conversationSchema.statics.getAllConversation = async (userId, skip, limit) => {
           type: 1,
           updatedAt: 1,
         },
-        mb:{
-          numberUnread:1,
+        mb: {
+          numberUnread: 1,
         },
         type: 1,
       },

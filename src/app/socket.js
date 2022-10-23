@@ -1,6 +1,6 @@
 // const redisService = require('../services/redisService');
 const redisDb = require("../app/redis");
-const ConversationService = require('../services/ConversationService');
+const ConversationService = require("../services/ConversationService");
 
 const handleStart = async (user) => {
   const { uid, first_name, last_name, avatar } = user;
@@ -48,22 +48,20 @@ const getListUserOnline = async (userId, cb) => {
   }
 };
 
+let users = [];
 
-
-let users =[];
-
-const addUsers = (userId,soketId) => {
+const addUsers = (userId, soketId) => {
   !users.some((user) => user.userId === userId) &&
     users.push({ userId, soketId });
 };
 
 const removeUser = (soketId) => {
   users = users.filter((user) => user.soketId !== soketId);
-}
+};
 
 const getUser = (userId) => {
   return users.find((user) => user.userId === userId);
-}
+};
 
 const socket = (io) => {
   io.on("connection", (socket) => {
@@ -79,10 +77,8 @@ const socket = (io) => {
     //   io.to(user.soketId).emit("get-message",{senderId,message});
     //   const conversationService = new ConversationService();
     //   const listCon = await conversationService.getAllConversation(senderId);
-    //   io.emit("get-last-message",listCon.data);      
+    //   io.emit("get-last-message",listCon.data);
     // });
-
-
 
     socket.on("disconnect", () => {
       const userId = socket.userId;
@@ -100,7 +96,7 @@ const socket = (io) => {
 
     socket.on("join-conversations", (conversationIds) => {
       conversationIds.forEach((id) => socket.join(id));
-      console.log("joinSuccess"+conversationIds);
+      console.log("joinSuccess" + conversationIds);
     });
 
     // socket.on("join-room", (idCon) => {
@@ -109,23 +105,24 @@ const socket = (io) => {
     // });
 
     socket.on("join-room", (idCon) => {
-      socket.join(idCon)
-      console.log("joinRoom"+idCon);
-      socket.on("send-message",async ({senderId,receiverId,message}) => {
-        
-        io.to(idCon).emit("get-message",{senderId,message});
+      socket.join(idCon);
+      console.log("joinRoom" + idCon);
+      socket.on("send-message", async ({ senderId, receiverId, message }) => {
+        io.to(idCon).emit("get-message", { senderId, message });
         const conversationService = new ConversationService();
-        const listConSender = await conversationService.getAllConversation(senderId);
-        const listConReceiver = await conversationService.getAllConversation(receiverId);
+        const listConSender = await conversationService.getAllConversation(
+          senderId
+        );
+        const listConReceiver = await conversationService.getAllConversation(
+          receiverId
+        );
 
-        io.emit("get-last-message",{
-          listSender:listConSender.data,
-          listReceiver:listConReceiver.data
-        });      
+        io.emit("get-last-message", {
+          listSender: listConSender.data,
+          listReceiver: listConReceiver.data,
+        });
       });
     });
-
-    
   });
 };
 

@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
@@ -54,4 +53,3 @@ friendReqSchema.statics.deleteByIds = async (
 const FriendRequest = mongoose.model("friendRequest", friendReqSchema);
 
 module.exports = FriendRequest;
-

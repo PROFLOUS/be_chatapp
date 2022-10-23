@@ -58,46 +58,47 @@ messageSchema.statics.getListByConversationIdAndUserId = async (
   const messages = await Message.aggregate([
     {
       $match: {
-          conversationId: ObjectId(conversationId),
+        conversationId: ObjectId(conversationId),
       },
-  },
-  {
+    },
+    {
       $lookup: {
-          from: 'messages',
-          localField: 'replyMessageId',
-          foreignField: '_id',
-          as: 'replyMessage',
+        from: "messages",
+        localField: "replyMessageId",
+        foreignField: "_id",
+        as: "replyMessage",
       },
-  },
-  {
-      $group:{
-          _id: "$conversationId",
-          messages: {
-              $push: {
-                  _id: "$_id",
-                  userId: "$userId",
-                  content: "$content",
-                  createdAt: "$createdAt",
-                  isDeleted: "$isDeleted",
-                  reacts:"$reacts",
-                  replyMessageId: "$replyMessage",
-                  createdAt: "$createdAt",
-                  type: "$type",
-              },
+    },
+    {
+      $group: {
+        _id: "$conversationId",
+        messages: {
+          $push: {
+            _id: "$_id",
+            userId: "$userId",
+            content: "$content",
+            createdAt: "$createdAt",
+            isDeleted: "$isDeleted",
+            reacts: "$reacts",
+            replyMessageId: "$replyMessage",
+            createdAt: "$createdAt",
+            type: "$type",
           },
+        },
       },
-  },{
+    },
+    {
       $project: {
-          _id: 0,
-          messages: 1,
+        _id: 0,
+        messages: 1,
       },
-  },
-  {
+    },
+    {
       $skip: 0,
-  },
-  {
+    },
+    {
       $limit: 20,
-  },
+    },
   ]);
   return messages;
 };

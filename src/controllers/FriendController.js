@@ -37,6 +37,7 @@ class FriendController {
         console.log("friend :" + fiendResult.userId);
       }
       res.json(listFriend);
+      //res.end();
       console.log(listFriend);
     } catch (error) {
       next(error);
@@ -67,6 +68,7 @@ class FriendController {
         console.log("friend :" + fiendResult.userId);
       }
       res.json(listFriend);
+      res.end();
       console.log(listFriend);
     } catch (error) {
       next(error);

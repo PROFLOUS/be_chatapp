@@ -30,8 +30,7 @@ class MessageController {
 
   //[POST] /text  tin nhắn dạng text
   async addText(req, res, next) {
-    const { userId,conversationId } = req.body;
-
+    const { userId, conversationId } = req.body;
 
     try {
       // const { conversationId } = req.body;
