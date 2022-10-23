@@ -109,7 +109,12 @@ const socket = (io) => {
     //   io.emit("get-last-message",listCon.data);      
     // });
 
-
+    socket.on("start", (user) => {
+      const { uid } = user;
+      socket.userId = uid;
+      socket.join(uid);
+      handleStart(user);
+    });
 
     socket.on("disconnect", () => {
       const userId = socket.userId;
@@ -118,12 +123,7 @@ const socket = (io) => {
       if (userId) handleEnd(userId);
     });
 
-    socket.on("start", (user) => {
-      const { uid } = user;
-      socket.userId = uid;
-      socket.join(uid);
-      handleStart(user);
-    });
+    
 
     socket.on("join-conversations", (conversationIds) => {
       conversationIds.forEach((id) => socket.join(id));
@@ -138,30 +138,40 @@ const socket = (io) => {
     socket.on("join-room", (idCon) => {
       socket.join(idCon)
       console.log("joinRoom"+idCon);
-      socket.on("send-message",async ({senderId,receiverId,message}) => {
-        console.log({message});
-        io.to(idCon).emit("get-message",{senderId,message});
-        const conversationService = new ConversationService();
-        const listConSender = await conversationService.getAllConversation(senderId);
-        const listConReceiver = await conversationService.getAllConversation(receiverId);
-
-        io.emit("get-last-message",{
-          listSender:listConSender.data,
-          listReceiver:listConReceiver.data
-        });
-        
-        
-        
-      });
+      
     });
 
-    // socket.on("seen-message",async ({conversationId,userId}) => {
+    socket.on("send-message",async ({senderId,receiverId,message,idCon}) => {
+      console.log({message});
+      io.to(idCon).emit("get-message",{senderId,message});
+      const conversationService = new ConversationService();
+      const listConSender = await conversationService.getAllConversation(senderId);
+      const listConReceiver = await conversationService.getAllConversation(receiverId);
+
+      io.emit("get-last-message",{
+        listSender:listConSender.data,
+        listReceiver:listConReceiver.data
+      });
+      
+      
+      
+    });
+
+    socket.on("leave-room", (idConversation) => {
+      socket.leave(idConversation);
+      console.log("leaveRoom"+idConversation);
+    })
+
+    
+
+    // socket.on("seen-message",async ({isSeen,conversationId,userId}) => {
+    //   console.log(isSeen);
     //   await LastMessageService.updateLastMessage(conversationId,userId);
     //   console.log("seen-message");
-    //   io.emit("get-last-message",{
-    //     listSender:listConSender.data,
-    //     listReceiver:listConReceiver.data
-    //   }); 
+    //   // io.emit("get-last-message",{
+    //   //   listSender:listConSender.data,
+    //   //   listReceiver:listConReceiver.data
+    //   // }); 
     // })
      
   });

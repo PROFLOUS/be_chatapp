@@ -102,7 +102,7 @@ use('test');
 // db.conversations.aggregate([
 //     {
 //         $match: {
-//             "members.userId":{$in:["1EfO2PTTDdXERqjfA7scc7tL1X22"]}
+//             "members.userId":{$in:["NHNO8P6CypfCRiWyh77rPZU7lCL2"]}
 //         },
 //     },
 //     {
@@ -126,7 +126,7 @@ use('test');
 //     },
 //     {
 //         $match: {
-//             "mb.userId":"1EfO2PTTDdXERqjfA7scc7tL1X22"
+//             "mb.userId":"NHNO8P6CypfCRiWyh77rPZU7lCL2"
 //         },
 //     },
 //     {
@@ -142,6 +142,7 @@ use('test');
 //             mb:{
 //                 numberUnread:1,
 //             },
+//             // mb:1,
 //             type: 1,
 //         }
 //     },
@@ -182,24 +183,24 @@ use('test');
 //     }
 // ]);
 
-// db.conversations.aggregate([
-//     {
-//         $match: {
-//             _id: ObjectId("63214e5ff15b81ae2fce55f4"),
-//         },
-//     },
-//     {
-//         $unwind:"$members"
-//     },
-//     {
-//         $match: {
-//             "members.userId":{$ne:ObjectId("63181c892499351136c9da68")}
-//         },
-//     },
-// ])
-db.conversations.deleteMany({})
-db.friendrequests.deleteMany({})
-db.friends.deleteMany({})
-db.members.deleteMany({})
-db.messages.deleteMany({})
+db.conversations.aggregate([
+    {
+        $match: {
+            _id: ObjectId("635544d9b62c0a52a4ee5da2"),
+        },
+    },
+    {
+        $unwind:"$members"
+    },
+    {
+        $match: {
+            "members.userId":{$ne:"M92nGFIkwIdwtI49h3xPznejcgu2"}
+        },
+    },
+])
+// db.conversations.deleteMany({})
+// db.friendrequests.deleteMany({})
+// db.friends.deleteMany({})
+// db.members.deleteMany({})
+// db.messages.deleteMany({})
 

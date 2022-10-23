@@ -12,12 +12,13 @@ const ObjectId = require('mongodb').ObjectId;
 class ConversationService {
 
     async getInfoIndividual(conversationId,userId){
-        const conver = await Conversation.getMemberByCon(conversationId,userId);
+        const conver = await Conversation.getMemberFriend(conversationId,userId);
         const cons = conver.map((con) => con);
         let firstName = '';
         let lastName = '';
         let avatar ;
         let userIdFriend;
+        let idCon;
         for(const conTmp of cons){
             const {members,_id} = conTmp;
             const {userFistName,userLastName,avaUser} = members;
@@ -26,8 +27,9 @@ class ConversationService {
             lastName=userLastName;
             avatar = avaUser;
             userIdFriend=members.userId;
+            idCon = _id;
         }
-        return {firstName,lastName,avatar,userIdFriend};
+        return {firstName,lastName,avatar,userIdFriend,idCon};
     }
 
     async updateNumberUnread(conversationId, userId) {
@@ -184,21 +186,7 @@ class ConversationService {
                 var rs = await this.getInfoIndividual(id,userId);
                 listInfo.push(rs);
             }
-            
-
-
-            //update numberUnread
             await this.updateNumberUnread(id, userId);
-
-            // //update numberUnread
-            // const mb = await Member.findOne({
-            //     conversationId:id,
-            //     userId
-            // })
-            // const { lastView } = mb;
-            // const countUnread = await Message.countUnread(lastView, id);
-            // await mb.updateOne({ $set: { numberUnread: countUnread } });
-            
             
         }
         
@@ -208,11 +196,19 @@ class ConversationService {
             skip,
             limit
         );
+        
+
+        
+
         let rss =[] ;
-        let ifo = listInfo.reverse();
 
         for(let i=0; i<conversations.length;i++){
-            rss.push({conversations:conversations[i],inFo:ifo[i]});
+            if(conversations[i]._id.toString()===listInfo[i].idCon.toString()){
+                rss.push({
+                        conversations:conversations[i],
+                        inFo:listInfo[i]
+                    });
+            }
         }
 
         return {
