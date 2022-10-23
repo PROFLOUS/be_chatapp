@@ -39,19 +39,19 @@ const serverTest = http.createServer(app);
 
 const server = https.createServer(cred,app);
 
-// const io = socketio(server,{
-//     cors:{
-//         origin:"http://localhost:3000",
-//         credentials:true
-//     }
-// });
-
-const io = socketio(serverTest,{
+const io = socketio(server,{
     cors:{
         origin:"http://localhost:3000",
         credentials:true
     }
 });
+
+// const io = socketio(serverTest,{
+//     cors:{
+//         origin:"http://localhost:3000",
+//         credentials:true
+//     }
+// });
 
 socket(io);
 app.use(handleErr);
