@@ -126,8 +126,10 @@ const socket = (io) => {
     
 
     socket.on("join-conversations", (conversationIds) => {
-      conversationIds.forEach((id) => socket.join(id));
-      console.log("joinSuccess"+conversationIds);
+      conversationIds.forEach((id) => {
+        console.log("joinSuccess"+id);
+        socket.join(id)
+      });
     });
 
     // socket.on("join-room", (idCon) => {
@@ -138,14 +140,14 @@ const socket = (io) => {
     socket.on("join-room", (idCon) => {
       socket.join(idCon)
       console.log("joinRoom"+idCon);
-      socket.on("send-message",async ({senderId,receiverId,message,idCon}) => {
+      socket.on("send-message",async ({senderId,receiverId,message}) => {
         console.log({message});
         io.to(idCon).emit("get-message",{senderId,message});
         const conversationService = new ConversationService();
         const listConSender = await conversationService.getAllConversation(senderId);
         const listConReceiver = await conversationService.getAllConversation(receiverId);
   
-        io.emit("get-last-message",{
+        io.to(idCon).emit("get-last-message",{
           listSender:listConSender.data,
           listReceiver:listConReceiver.data
         });
