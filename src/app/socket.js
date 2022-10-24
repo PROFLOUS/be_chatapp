@@ -137,21 +137,60 @@ const socket = (io) => {
     //   console.log("joinRoom"+idCon);
     // });
 
-    socket.on("join-room", (idCon) => {
+    socket.on("join-room", ({idCon,isNew}) => {
       socket.join(idCon)
       console.log("joinRoom"+idCon);
-      socket.on("send-message",async ({senderId,receiverId,message}) => {
-        console.log({message});
-        io.to(idCon).emit("get-message",{senderId,message});
-        const conversationService = new ConversationService();
-        const listConSender = await conversationService.getAllConversation(senderId);
-        const listConReceiver = await conversationService.getAllConversation(receiverId);
-  
+      // socket.on("send-message",async ({senderId,receiverId,message}) => {
+      //   console.log({message});
+      //   io.to(idCon).emit("get-message",{senderId,message});
+      //   const conversationService = new ConversationService();
+      //   const listConSender = await conversationService.getAllConversation(senderId);
+      //   const listConReceiver = await conversationService.getAllConversation(receiverId);
+      //   console.log("S"+{listConSender});
+      //   console.log("R"+{listConReceiver});
+
+      //   if(isNew){
+      //     console.log("new");
+      //     io.emit("get-last-message",{
+      //       listSender:listConSender.data,
+      //       listReceiver:listConReceiver.data
+            
+      //     })
+      //     isNew = false;
+      //   }else{
+      //     io.to(idCon).emit("get-last-message",{
+      //       listSender:listConSender.data,
+      //       listReceiver:listConReceiver.data
+      //     });
+      //   }
+        
+      // });
+      
+    });
+
+    socket.on("send-message",async ({senderId,receiverId,message,idCon}) => {
+      console.log({message});
+      io.to(idCon).emit("get-message",{senderId,message});
+      const conversationService = new ConversationService();
+      const listConSender = await conversationService.getAllConversation(senderId);
+      const listConReceiver = await conversationService.getAllConversation(receiverId);
+      console.log("S"+{listConSender});
+      console.log("R"+{listConReceiver});
+
+      // if(isNew){
+      //   console.log("new");
+      //   io.emit("get-last-message",{
+      //     listSender:listConSender.data,
+      //     listReceiver:listConReceiver.data
+          
+      //   })
+      //   isNew = false;
+      // }else{
         io.to(idCon).emit("get-last-message",{
           listSender:listConSender.data,
           listReceiver:listConReceiver.data
         });
-      });
+      // }
       
     });
 

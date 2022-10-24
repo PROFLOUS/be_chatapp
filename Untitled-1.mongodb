@@ -183,24 +183,24 @@ use('test');
 //     }
 // ]);
 
-db.conversations.aggregate([
-    {
-        $match: {
-            _id: ObjectId("635544d9b62c0a52a4ee5da2"),
-        },
-    },
-    {
-        $unwind:"$members"
-    },
-    {
-        $match: {
-            "members.userId":{$ne:"M92nGFIkwIdwtI49h3xPznejcgu2"}
-        },
-    },
-])
-// db.conversations.deleteMany({})
-// db.friendrequests.deleteMany({})
-// db.friends.deleteMany({})
-// db.members.deleteMany({})
-// db.messages.deleteMany({})
+// db.conversations.aggregate([
+//     {
+//         $match: {
+//             _id: ObjectId("635544d9b62c0a52a4ee5da2"),
+//         },
+//     },
+//     {
+//         $unwind:"$members"
+//     },
+//     {
+//         $match: {
+//             "members.userId":{$ne:"M92nGFIkwIdwtI49h3xPznejcgu2"}
+//         },
+//     },
+// ])
+db.conversations.deleteMany({})
+db.friendrequests.deleteMany({})
+db.friends.deleteMany({})
+db.members.deleteMany({})
+db.messages.deleteMany({})
 
