@@ -194,6 +194,11 @@ const socket = (io) => {
       
     });
 
+    socket.on("reMessage",({idMessage,idCon})=>{
+      console.log("reMessage"+idMessage);
+      io.to(idCon).emit("reMessage",idMessage);
+    })
+
     
 
     socket.on("leave-room", (idConversation) => {

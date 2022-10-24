@@ -89,7 +89,7 @@ class ConversationService {
     }
     
     async getConversationById(conversationId,userId,page, size){
-        if (!conversationId || !size || page < 0 || size <= 0)
+        if (!conversationId || !size || page < 0 || size <= 0) 
             throw new ArgumentError();
         const conversation = await Conversation.findOne({ 
             _id:conversationId,
