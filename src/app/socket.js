@@ -87,11 +87,10 @@ const socket = (io) => {
     socket.on("disconnect", () => {
       const userId = socket.userId;
       console.log(socket.id + " Disconnected");
-      removeUser(socket.id);
+      
       if (userId) handleEnd(userId);
     });
 
-    
 
     socket.on("join-conversations", (conversationIds) => {
       conversationIds.forEach((id) => {
@@ -104,39 +103,36 @@ const socket = (io) => {
     socket.on("join-room", ({idCon,isNew}) => {
       socket.join(idCon)
       console.log( socket.userId+" joinRoom: "+idCon);
-      socket.on("send-message",async ({senderId,receiverId,message}) => {
-        console.log({message});
+    });
 
-        io.to(idCon).emit("get-message",{senderId,message});
-        const conversationService = new ConversationService();
-        const listConSender = await conversationService.getAllConversation(senderId);
-        const listConReceiver = await conversationService.getAllConversation(receiverId);
-        console.log("S"+{listConSender});
-        console.log("R"+{listConReceiver});
+    socket.on("send-message",async ({senderId,receiverId,message,idCon,isNew}) => {
+      console.log({message});
 
-        if(isNew){
-          console.log("new");
-          io.emit("get-last-message",{
-            listSender:listConSender.data,
-            listReceiver:listConReceiver.data
-            
-          })
-          isNew = false;
-        }else{
-          io.to(idCon).emit("get-last-message",{
-            listSender:listConSender.data,
-            listReceiver:listConReceiver.data
-          });
-        }
-        
-      });
-  });
+      io.to(idCon).emit("get-message",{senderId,message});
+      const conversationService = new ConversationService();
+      const listConSender = await conversationService.getAllConversation(senderId);
+      const listConReceiver = await conversationService.getAllConversation(receiverId);
+
+      if(isNew){
+        console.log("new");
+        io.emit("get-last-message",{
+          listSender:listConSender.data,
+          listReceiver:listConReceiver.data
+        })
+        isNew = false;
+      }else{
+        io.to(idCon).emit("get-last-message",{
+          listSender:listConSender.data,
+          listReceiver:listConReceiver.data
+        });
+      }
+      
+    });
 
     socket.on("reMessage",({idMessage,idCon})=>{
       console.log("reMessage"+idMessage);
       io.to(idCon).emit("reMessage",idMessage);
     })
-
     
 
     socket.on("leave-room", (idConversation) => {
@@ -144,10 +140,8 @@ const socket = (io) => {
       console.log("leaveRoom"+idConversation);
     })
 
-    
 
     socket.on("seen-message",async ({conversationId,userId}) => {
-      
       const conversationService = new ConversationService();
       await LastMessageService.updateLastMessage(conversationId,userId);
       const listConSender = await conversationService.getAllConversation(userId);

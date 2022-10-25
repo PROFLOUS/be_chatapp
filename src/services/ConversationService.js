@@ -204,8 +204,6 @@ class ConversationService {
             throw new MyError("File, Type or ConversationId not exists");
         for(let i=0; i<conversations.length;i++){
             for(let j =0; j< listInfo.length;j++){
-                console.log("id"+conversations[i]._id.toString());
-                console.log("if"+listInfo[j].idCon.toString());
                 if(conversations[i]._id.toString()===listInfo[j].idCon.toString()){
                     rss.push({
                             conversations:conversations[i],
