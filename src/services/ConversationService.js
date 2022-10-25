@@ -6,6 +6,7 @@ const commonUtils = require('../utils/commonUtils');
 const ArgumentError = require('../exception/ArgumentError');
 const Friend = require('../models/Friend');
 const ObjectId = require('mongodb').ObjectId;
+const MyError = require("../exception/MyError");
 
 
 
@@ -196,20 +197,25 @@ class ConversationService {
             skip,
             limit
         );
-        
-
-        
 
         let rss =[] ;
 
+        if (!conversations || !listInfo)
+            throw new MyError("File, Type or ConversationId not exists");
         for(let i=0; i<conversations.length;i++){
-            if(conversations[i]._id.toString()===listInfo[i].idCon.toString()){
-                rss.push({
-                        conversations:conversations[i],
-                        inFo:listInfo[i]
-                    });
+            for(let j =0; j< listInfo.length;j++){
+                console.log("id"+conversations[i]._id.toString());
+                console.log("if"+listInfo[j].idCon.toString());
+                if(conversations[i]._id.toString()===listInfo[j].idCon.toString()){
+                    rss.push({
+                            conversations:conversations[i],
+                            inFo:listInfo[j]
+                        });
+                }
             }
         }
+        
+
 
         return {
             data: rss,

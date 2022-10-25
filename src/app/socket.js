@@ -73,41 +73,9 @@ const getListUserOnline = async (userId, cb) => {
   }
 };
 
-
-
-let users =[];
-
-const addUsers = (userId,soketId) => {
-  !users.some((user) => user.userId === userId) &&
-    users.push({ userId, soketId });
-};
-
-const removeUser = (soketId) => {
-  users = users.filter((user) => user.soketId !== soketId);
-}
-
-const getUser = (userId) => {
-  return users.find((user) => user.userId === userId);
-}
-
-
-
 const socket = (io) => {
   io.on("connection", (socket) => {
     console.log(socket.id + " Connected");
-
-    // socket.on("add-user", (userId) => {
-    //   addUsers(userId,socket.id);
-    //   io.emit("get-users",users);
-    // });
-
-    // socket.on("send-message",async ({senderId,receiverId,message}) => {
-    //   const user = getUser(receiverId);
-    //   io.to(user.soketId).emit("get-message",{senderId,message});
-    //   const conversationService = new ConversationService();
-    //   const listCon = await conversationService.getAllConversation(senderId);
-    //   io.emit("get-last-message",listCon.data);      
-    // });
 
     socket.on("start", (user) => {
       const { uid } = user;
@@ -127,72 +95,42 @@ const socket = (io) => {
 
     socket.on("join-conversations", (conversationIds) => {
       conversationIds.forEach((id) => {
-        console.log("joinSuccess"+id);
+        console.log(socket.userId+"joinSuccess:"+id);
         socket.join(id)
       });
     });
 
-    // socket.on("join-room", (idCon) => {
-    //   socket.join(idCon)
-    //   console.log("joinRoom"+idCon);
-    // });
 
     socket.on("join-room", ({idCon,isNew}) => {
       socket.join(idCon)
-      console.log("joinRoom"+idCon);
-      // socket.on("send-message",async ({senderId,receiverId,message}) => {
-      //   console.log({message});
-      //   io.to(idCon).emit("get-message",{senderId,message});
-      //   const conversationService = new ConversationService();
-      //   const listConSender = await conversationService.getAllConversation(senderId);
-      //   const listConReceiver = await conversationService.getAllConversation(receiverId);
-      //   console.log("S"+{listConSender});
-      //   console.log("R"+{listConReceiver});
+      console.log( socket.userId+" joinRoom: "+idCon);
+      socket.on("send-message",async ({senderId,receiverId,message}) => {
+        console.log({message});
 
-      //   if(isNew){
-      //     console.log("new");
-      //     io.emit("get-last-message",{
-      //       listSender:listConSender.data,
-      //       listReceiver:listConReceiver.data
+        io.to(idCon).emit("get-message",{senderId,message});
+        const conversationService = new ConversationService();
+        const listConSender = await conversationService.getAllConversation(senderId);
+        const listConReceiver = await conversationService.getAllConversation(receiverId);
+        console.log("S"+{listConSender});
+        console.log("R"+{listConReceiver});
+
+        if(isNew){
+          console.log("new");
+          io.emit("get-last-message",{
+            listSender:listConSender.data,
+            listReceiver:listConReceiver.data
             
-      //     })
-      //     isNew = false;
-      //   }else{
-      //     io.to(idCon).emit("get-last-message",{
-      //       listSender:listConSender.data,
-      //       listReceiver:listConReceiver.data
-      //     });
-      //   }
+          })
+          isNew = false;
+        }else{
+          io.to(idCon).emit("get-last-message",{
+            listSender:listConSender.data,
+            listReceiver:listConReceiver.data
+          });
+        }
         
-      // });
-      
-    });
-
-    socket.on("send-message",async ({senderId,receiverId,message,idCon}) => {
-      console.log({message});
-      io.to(idCon).emit("get-message",{senderId,message});
-      const conversationService = new ConversationService();
-      const listConSender = await conversationService.getAllConversation(senderId);
-      const listConReceiver = await conversationService.getAllConversation(receiverId);
-      console.log("S"+{listConSender});
-      console.log("R"+{listConReceiver});
-
-      // if(isNew){
-      //   console.log("new");
-      //   io.emit("get-last-message",{
-      //     listSender:listConSender.data,
-      //     listReceiver:listConReceiver.data
-          
-      //   })
-      //   isNew = false;
-      // }else{
-        io.to(idCon).emit("get-last-message",{
-          listSender:listConSender.data,
-          listReceiver:listConReceiver.data
-        });
-      // }
-      
-    });
+      });
+  });
 
     socket.on("reMessage",({idMessage,idCon})=>{
       console.log("reMessage"+idMessage);
@@ -208,15 +146,14 @@ const socket = (io) => {
 
     
 
-    // socket.on("seen-message",async ({isSeen,conversationId,userId}) => {
-    //   console.log(isSeen);
-    //   await LastMessageService.updateLastMessage(conversationId,userId);
-    //   console.log("seen-message");
-    //   // io.emit("get-last-message",{
-    //   //   listSender:listConSender.data,
-    //   //   listReceiver:listConReceiver.data
-    //   // }); 
-    // })
+    socket.on("seen-message",async ({conversationId,userId}) => {
+      
+      const conversationService = new ConversationService();
+      await LastMessageService.updateLastMessage(conversationId,userId);
+      const listConSender = await conversationService.getAllConversation(userId);
+      console.log(listConSender);
+      io.to(conversationId).emit("get-last",listConSender.data,);
+    })
      
   });
 };

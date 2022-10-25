@@ -32,9 +32,6 @@ const MessageService = {
   addFile: async (file, type, conversationId, userId) => {
     // upload ảnh
     const content = await awsS3Service.uploadFile(file);
-
-    console.log("content" + content);
-
     const newMessageTmp = {
       userId,
       content,
