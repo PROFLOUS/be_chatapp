@@ -30,7 +30,15 @@ const messageSchema = new Schema(
     deletedByUserIds: [],
     type: {
       type: String,
-      enum: ["TEXT", "IMAGE", "STICKER", "VIDEO", "APPLICATION", "HTML", "NOTIFY"],
+      enum: [
+        "TEXT",
+        "IMAGE",
+        "STICKER",
+        "VIDEO",
+        "APPLICATION",
+        "HTML",
+        "NOTIFY",
+      ],
       require: true,
     },
     createdAt: Date,
@@ -68,7 +76,6 @@ messageSchema.statics.getListByConversationIdAndUserId = async (
         foreignField: "_id",
         as: "replyMessage",
       },
-<<<<<<< HEAD
     },
     {
       $group: {
@@ -79,34 +86,17 @@ messageSchema.statics.getListByConversationIdAndUserId = async (
             userId: "$userId",
             content: "$content",
             createdAt: "$createdAt",
+            deletedByUserIds: "$deletedByUserIds",
             isDeleted: "$isDeleted",
             reacts: "$reacts",
             replyMessageId: "$replyMessage",
             createdAt: "$createdAt",
             type: "$type",
-=======
-  },
-  {
-      $group:{
-          _id: "$conversationId",
-          messages: {
-              $push: {
-                  _id: "$_id",
-                  userId: "$userId",
-                  content: "$content",
-                  createdAt: "$createdAt",
-                  deletedByUserIds: "$deletedByUserIds",
-                  isDeleted: "$isDeleted",
-                  reacts:"$reacts",
-                  replyMessageId: "$replyMessage",
-                  createdAt: "$createdAt",
-                  type: "$type",
-              },
->>>>>>> main
           },
         },
       },
     },
+
     {
       $project: {
         _id: 0,

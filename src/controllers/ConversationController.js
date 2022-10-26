@@ -14,8 +14,6 @@ class ConversationController {
   }
 
   // [GET] /:id
-
-  // [GET] /:id
   async getOne(req, res, next) {
     const { id } = req.params;
     // const { userId } = req.params;
@@ -60,6 +58,11 @@ class ConversationController {
     } catch (err) {
       next(err);
     }
+  }
+
+  async checkConversation(req, res, next) {
+    // const senderID = req.params.userId;
+    // const receiverID = req.params.friendId;
 
     const senderID = req.query.senderID;
     const receiverID = req.query.receiverID;
