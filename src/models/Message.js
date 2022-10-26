@@ -30,7 +30,7 @@ const messageSchema = new Schema(
     deletedByUserIds: [],
     type: {
       type: String,
-      enum: ["TEXT", "IMAGE", "STICKER", "VIDEO", "FILE", "HTML", "NOTIFY"],
+      enum: ["TEXT", "IMAGE", "STICKER", "VIDEO", "APPLICATION", "HTML", "NOTIFY"],
       require: true,
     },
     createdAt: Date,
@@ -78,6 +78,7 @@ messageSchema.statics.getListByConversationIdAndUserId = async (
                   userId: "$userId",
                   content: "$content",
                   createdAt: "$createdAt",
+                  deletedByUserIds: "$deletedByUserIds",
                   isDeleted: "$isDeleted",
                   reacts:"$reacts",
                   replyMessageId: "$replyMessage",

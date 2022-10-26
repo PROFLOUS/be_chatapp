@@ -142,7 +142,6 @@ const socket = (io) => {
       console.log("reMessage"+idMessage);
       io.to(idCon).emit("reMessage",idMessage);
     })
-
     
 
     socket.on("leave-room", (idConversation) => {
@@ -150,10 +149,8 @@ const socket = (io) => {
       console.log("leaveRoom"+idConversation);
     })
 
-    
 
     socket.on("seen-message",async ({conversationId,userId}) => {
-      
       const conversationService = new ConversationService();
       await LastMessageService.updateLastMessage(conversationId,userId);
       const listConSender = await conversationService.getAllConversation(userId);
