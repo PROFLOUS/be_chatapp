@@ -39,19 +39,19 @@ const serverTest = http.createServer(app);
 
 const server = https.createServer(cred,app);
 
-// const io = socketio(server,{
-//     cors:{
-//         origin:"http://localhost:3000",
-//         credentials:true
-//     }
-// });
-
-const io = socketio(serverTest,{
+const io = socketio(server,{
     cors:{
         origin:"http://localhost:3000",
         credentials:true
     }
 });
+
+// const io = socketio(serverTest,{
+//     cors:{
+//         origin:"http://localhost:3000",
+//         credentials:true
+//     }
+// });
 
 socket(io);
 app.use(handleErr);
@@ -70,13 +70,13 @@ routes(app,io);
 
 const port = process.env.PORT
 
-// server.listen(port, () => {
-//     console.log('Example app listening on http://localhost:'+port)
-//     }
-// )
-
-
-serverTest.listen(5005, () => {
-    console.log('Example app listening on http://localhost:'+5005)
+server.listen(port, () => {
+    console.log('Example app listening on http://localhost:'+port)
     }
 )
+
+
+// serverTest.listen(5005, () => {
+//     console.log('Example app listening on http://localhost:'+5005)
+//     }
+// )
