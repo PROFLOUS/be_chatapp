@@ -116,6 +116,7 @@ class ConversationService {
       size,
       totalMessages
     );
+    console.log(skip, limit, totalPages);
 
     try {
       let messages = await Message.getListByConversationIdAndUserId(

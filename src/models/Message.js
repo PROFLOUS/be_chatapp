@@ -78,6 +78,12 @@ messageSchema.statics.getListByConversationIdAndUserId = async (
       },
     },
     {
+      $skip: skip,
+    },
+    {
+      $limit: limit,
+    },
+    {
       $group: {
         _id: "$conversationId",
         messages: {
@@ -96,18 +102,11 @@ messageSchema.statics.getListByConversationIdAndUserId = async (
         },
       },
     },
-
     {
       $project: {
         _id: 0,
         messages: 1,
       },
-    },
-    {
-      $skip: 0,
-    },
-    {
-      $limit: 20,
     },
   ]);
   return messages;
