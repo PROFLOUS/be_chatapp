@@ -93,39 +93,48 @@ const socket = (io) => {
 
 
     socket.on("join-conversations", (conversationIds) => {
+      console.log("chayy");
+      console.log("all1"+conversationIds);
       conversationIds.forEach((id) => {
-        console.log(socket.userId+"joinSuccess:"+id);
         socket.join(id)
+        console.log(socket.userId+"joinSuccess:"+id+"\n");
       });
+      
     });
 
 
     socket.on("join-room", ({idCon,isNew}) => {
+      console.log("join");
       socket.join(idCon)
       console.log( socket.userId+" joinRoom: "+idCon);
     });
 
     socket.on("send-message",async ({senderId,receiverId,message,idCon,isNew}) => {
       console.log({message});
+      socket.receiverId=receiverId
 
-      io.to(idCon).emit("get-message",{senderId,message});
+      io.to(socket.receiverId).to(socket.userId).emit("get-message",{senderId,message});
       const conversationService = new ConversationService();
       const listConSender = await conversationService.getAllConversation(senderId);
       const listConReceiver = await conversationService.getAllConversation(receiverId);
 
-      if(isNew){
-        console.log("new");
-        io.emit("get-last-message",{
-          listSender:listConSender.data,
-          listReceiver:listConReceiver.data
-        })
-        isNew = false;
-      }else{
-        io.to(idCon).emit("get-last-message",{
+
+      // if(isNew){
+      //   console.log("new");
+      //   io.emit("get-last-message",{
+      //     listSender:listConSender.data,
+      //     listReceiver:listConReceiver.data
+          
+      //   })
+      //   isNew = false;
+      // }else{
+        
+        io.to(socket.receiverId).to(socket.userId).emit("get-last-message",{
           listSender:listConSender.data,
           listReceiver:listConReceiver.data
         });
-      }
+        console.log("last");
+      // }
       
     });
 
@@ -133,6 +142,7 @@ const socket = (io) => {
       console.log("reMessage"+idMessage);
       io.to(idCon).emit("reMessage",idMessage);
     })
+
     
 
     socket.on("leave-room", (idConversation) => {
@@ -140,13 +150,14 @@ const socket = (io) => {
       console.log("leaveRoom"+idConversation);
     })
 
+    
 
     socket.on("seen-message",async ({conversationId,userId}) => {
+      
       const conversationService = new ConversationService();
       await LastMessageService.updateLastMessage(conversationId,userId);
       const listConSender = await conversationService.getAllConversation(userId);
-      console.log(listConSender);
-      io.to(conversationId).emit("get-last",listConSender.data,);
+      io.to(socket.id).emit("get-last",listConSender.data,);
     })
      
   });

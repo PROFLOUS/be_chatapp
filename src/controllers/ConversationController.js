@@ -20,9 +20,9 @@ class ConversationController {
         const userId = req.query.receiverId;
 
 
-        var page=0;
-        var size=20;
-        // const {page=0, size=20} = req.query;
+        // var page=0;
+        // var size=20;
+        const {page=0, size=30} = req.query;
 
         try {
             const conversationService = new ConversationService();
@@ -40,9 +40,9 @@ class ConversationController {
         // const userId = req.query.userID;
         // console.log("userId");
 
-        // const {page=0, size=20} = req.query;
-        var page=0;
-        var size=20;
+        const {page=0, size=10} = req.query;
+        // var page=0;
+        // var size=20;
         
 
         try {
