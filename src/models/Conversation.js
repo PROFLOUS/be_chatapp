@@ -75,7 +75,7 @@ conversationSchema.statics.getByIdAndUserId = async (
   return conversation;
 };
 
-conversationSchema.statics.getMemberByCon = async (_id, userId) => {
+conversationSchema.statics.getMemberFriend = async (_id, userId) => {
   const conversation = await Conversation.aggregate([
     {
       $match: {

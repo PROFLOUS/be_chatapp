@@ -6,15 +6,17 @@ const commonUtils = require("../utils/commonUtils");
 const ArgumentError = require("../exception/ArgumentError");
 const Friend = require("../models/Friend");
 const ObjectId = require("mongodb").ObjectId;
+const MyError = require("../exception/MyError");
 
 class ConversationService {
   async getInfoIndividual(conversationId, userId) {
-    const conver = await Conversation.getMemberByCon(conversationId, userId);
+    const conver = await Conversation.getMemberFriend(conversationId, userId);
     const cons = conver.map((con) => con);
     let firstName = "";
     let lastName = "";
     let avatar;
     let userIdFriend;
+    let idCon;
     for (const conTmp of cons) {
       const { members, _id } = conTmp;
       const { userFistName, userLastName, avaUser } = members;
@@ -23,8 +25,9 @@ class ConversationService {
       lastName = userLastName;
       avatar = avaUser;
       userIdFriend = members.userId;
+      idCon = _id;
     }
-    return { firstName, lastName, avatar, userIdFriend };
+    return { firstName, lastName, avatar, userIdFriend, idCon };
   }
 
   async updateNumberUnread(conversationId, userId) {
@@ -73,7 +76,7 @@ class ConversationService {
   async checkIsFriendByCon(conversationId, userId) {
     //check đã là bạn
     let status;
-    const conver = await Conversation.getMemberByCon(conversationId, userId);
+    const conver = await Conversation.getMemberFriend(conversationId, userId);
     const fri = conver.map(async (con) => {
       const { members } = con;
       const freId = members.userId.toString();
@@ -150,22 +153,16 @@ class ConversationService {
 
   async getAllConversation(userId, page = 0, size = 20) {
     if (!userId || !size || page < 0 || size <= 0) throw new ArgumentError();
-
     const totalCon = await Conversation.countConversationByUserId(userId);
-
     const { skip, limit, totalPages } = commonUtils.getPagination(
       page,
       size,
       totalCon
     );
-
     const consId = await Conversation.find({
       "members.userId": { $in: [userId] },
     });
-
-    // let inFo=[];
     let listInfo = [];
-
     const conIds = consId.map((con) => con._id);
     for (const id of conIds) {
       const conversation = await Conversation.findOne({
@@ -174,25 +171,12 @@ class ConversationService {
       const { type } = conversation;
       if (type) {
         const inFoGroup = await this.getInfoGroup(conversation);
-        // inFo.length = 0;
-        // inFo.push(inFoGroup);
         listInfo.push(inFoGroup);
       } else {
         var rs = await this.getInfoIndividual(id, userId);
         listInfo.push(rs);
       }
-
-      //update numberUnread
       await this.updateNumberUnread(id, userId);
-
-      // //update numberUnread
-      // const mb = await Member.findOne({
-      //     conversationId:id,
-      //     userId
-      // })
-      // const { lastView } = mb;
-      // const countUnread = await Message.countUnread(lastView, id);
-      // await mb.updateOne({ $set: { numberUnread: countUnread } });
     }
 
     let conversations = await Conversation.getAllConversation(
@@ -201,10 +185,18 @@ class ConversationService {
       limit
     );
     let rss = [];
-    let ifo = listInfo.reverse();
 
+    if (!conversations || !listInfo)
+      throw new MyError("File, Type or ConversationId not exists");
     for (let i = 0; i < conversations.length; i++) {
-      rss.push({ conversations: conversations[i], inFo: ifo[i] });
+      for (let j = 0; j < listInfo.length; j++) {
+        if (conversations[i]._id.toString() === listInfo[j].idCon.toString()) {
+          rss.push({
+            conversations: conversations[i],
+            inFo: listInfo[j],
+          });
+        }
+      }
     }
 
     return {

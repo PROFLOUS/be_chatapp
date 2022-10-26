@@ -14,14 +14,16 @@ class ConversationController {
   }
 
   // [GET] /:id
+
+  // [GET] /:id
   async getOne(req, res, next) {
     const { id } = req.params;
     // const { userId } = req.params;
     const userId = req.query.receiverId;
 
-    var page = 0;
-    var size = 20;
-    // const {page=0, size=20} = req.query;
+    // var page=0;
+    // var size=20;
+    const { page = 0, size = 30 } = req.query;
 
     try {
       const conversationService = new ConversationService();
@@ -43,9 +45,9 @@ class ConversationController {
     // const userId = req.query.userID;
     // console.log("userId");
 
-    // const {page=0, size=20} = req.query;
-    var page = 0;
-    var size = 20;
+    const { page = 0, size = 10 } = req.query;
+    // var page=0;
+    // var size=20;
 
     try {
       const conversationService = new ConversationService();
@@ -58,11 +60,6 @@ class ConversationController {
     } catch (err) {
       next(err);
     }
-  }
-
-  async checkConversation(req, res, next) {
-    // const senderID = req.params.userId;
-    // const receiverID = req.params.friendId;
 
     const senderID = req.query.senderID;
     const receiverID = req.query.receiverID;

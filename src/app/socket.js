@@ -1,18 +1,40 @@
 // const redisService = require('../services/redisService');
 const redisDb = require("../app/redis");
+
 const ConversationService = require("../services/ConversationService");
+const LastMessageService = require("../services/LastMesageService");
 
 const handleStart = async (user) => {
   const { uid, first_name, last_name, avatar } = user;
-
+  // const cachedUser = await redisDb.client.get(''+uid).then((data)=>{
+  //   return JSON.parse(data)
+  // }).catch((err)=>{
+  //   console.log(err);
+  // });
+  // if(cachedUser){
+  //   await redisDb.set(uid, {
+  //     ...cachedUser,
+  //     isOnline: true,
+  //     lastLogin: new Date(),
+  //   });
+  // }else{
   await redisDb.set(uid, {
     uid,
     first_name,
     last_name,
     avatar,
     isOnline: true,
-    lastLogin: null,
+    lastLogin: new Date(),
   });
+  // }
+  // await redisDb.set(uid, {
+  //   uid,
+  //   first_name,
+  //   last_name,
+  //   avatar,
+  //   isOnline: true,
+  //   lastLogin: null,
+  // });
   // const cachedUser = await redisDb.get(userId);
   // console.log(cachedUser);
   // if (cachedUser){
@@ -30,7 +52,14 @@ const handleStart = async (user) => {
 };
 
 const handleEnd = async (userId) => {
-  const cachedUser = await redisDb.get(userId);
+  const cachedUser = await redisDb.client
+    .get("" + userId)
+    .then((data) => {
+      return JSON.parse(data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   if (cachedUser)
     await redisDb.set(userId, {
       ...cachedUser,
@@ -48,67 +77,48 @@ const getListUserOnline = async (userId, cb) => {
   }
 };
 
-let users = [];
-
-const addUsers = (userId, soketId) => {
-  !users.some((user) => user.userId === userId) &&
-    users.push({ userId, soketId });
-};
-
-const removeUser = (soketId) => {
-  users = users.filter((user) => user.soketId !== soketId);
-};
-
-const getUser = (userId) => {
-  return users.find((user) => user.userId === userId);
-};
-
 const socket = (io) => {
   io.on("connection", (socket) => {
     console.log(socket.id + " Connected");
 
-    // socket.on("add-user", (userId) => {
-    //   addUsers(userId,socket.id);
-    //   io.emit("get-users",users);
-    // });
-
-    // socket.on("send-message",async ({senderId,receiverId,message}) => {
-    //   const user = getUser(receiverId);
-    //   io.to(user.soketId).emit("get-message",{senderId,message});
-    //   const conversationService = new ConversationService();
-    //   const listCon = await conversationService.getAllConversation(senderId);
-    //   io.emit("get-last-message",listCon.data);
-    // });
+    socket.on("start", (user) => {
+      const { uid } = user;
+      socket.userId = uid;
+      socket.join(uid);
+      handleStart(user);
+    });
 
     socket.on("disconnect", () => {
       const userId = socket.userId;
       console.log(socket.id + " Disconnected");
-      removeUser(socket.id);
+
       if (userId) handleEnd(userId);
     });
 
-    socket.on("start", (user) => {
-      const { uid } = user;
-      // socket.userId = uid;
-      // socket.join(uid);
-      handleStart(user);
-    });
-
     socket.on("join-conversations", (conversationIds) => {
-      conversationIds.forEach((id) => socket.join(id));
-      console.log("joinSuccess" + conversationIds);
+      console.log("chayy");
+      console.log("all1" + conversationIds);
+      conversationIds.forEach((id) => {
+        socket.join(id);
+        console.log(socket.userId + "joinSuccess:" + id + "\n");
+      });
     });
 
-    // socket.on("join-room", (idCon) => {
-    //   socket.join(idCon)
-    //   console.log("joinRoom"+idCon);
-    // });
-
-    socket.on("join-room", (idCon) => {
+    socket.on("join-room", ({ idCon, isNew }) => {
+      console.log("join");
       socket.join(idCon);
-      console.log("joinRoom" + idCon);
-      socket.on("send-message", async ({ senderId, receiverId, message }) => {
-        io.to(idCon).emit("get-message", { senderId, message });
+      console.log(socket.userId + " joinRoom: " + idCon);
+    });
+
+    socket.on(
+      "send-message",
+      async ({ senderId, receiverId, message, idCon, isNew }) => {
+        console.log({ message });
+        socket.receiverId = receiverId;
+
+        io.to(socket.receiverId)
+          .to(socket.userId)
+          .emit("get-message", { senderId, message });
         const conversationService = new ConversationService();
         const listConSender = await conversationService.getAllConversation(
           senderId
@@ -117,11 +127,42 @@ const socket = (io) => {
           receiverId
         );
 
-        io.emit("get-last-message", {
+        // if(isNew){
+        //   console.log("new");
+        //   io.emit("get-last-message",{
+        //     listSender:listConSender.data,
+        //     listReceiver:listConReceiver.data
+
+        //   })
+        //   isNew = false;
+        // }else{
+
+        io.to(socket.receiverId).to(socket.userId).emit("get-last-message", {
           listSender: listConSender.data,
           listReceiver: listConReceiver.data,
         });
-      });
+        console.log("last");
+        // }
+      }
+    );
+
+    socket.on("reMessage", ({ idMessage, idCon }) => {
+      console.log("reMessage" + idMessage);
+      io.to(idCon).emit("reMessage", idMessage);
+    });
+
+    socket.on("leave-room", (idConversation) => {
+      socket.leave(idConversation);
+      console.log("leaveRoom" + idConversation);
+    });
+
+    socket.on("seen-message", async ({ conversationId, userId }) => {
+      const conversationService = new ConversationService();
+      await LastMessageService.updateLastMessage(conversationId, userId);
+      const listConSender = await conversationService.getAllConversation(
+        userId
+      );
+      io.to(socket.id).emit("get-last", listConSender.data);
     });
   });
 };

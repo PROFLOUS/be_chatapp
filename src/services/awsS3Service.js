@@ -16,6 +16,7 @@ class AwsS3Service {
   //upload file to s3
   async uploadFile(file, bucketName = BucketName) {
     const fileStream = fs.readFileSync(file.path);
+    if(!fileStream) throw new MyError("File not exists");
 
     const uploadParams = {
       Bucket: bucketName,
