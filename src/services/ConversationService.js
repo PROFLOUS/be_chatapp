@@ -152,52 +152,40 @@ class ConversationService {
     async getAllConversation(userId,page=0, size=20){
         if (!userId || !size || page < 0 || size <= 0)
             throw new ArgumentError();
-
         const totalCon =
         await Conversation.countConversationByUserId(
             userId
         );
-
         const { skip, limit, totalPages } = commonUtils.getPagination(
             page,
             size,
             totalCon
         );
-
         const consId = await Conversation.find({
             "members.userId":{$in:[userId]},
         })
-
-        // let inFo=[];
         let listInfo =[];
-        
         const conIds = consId.map((con) => con._id);
         for(const id of conIds){
-
             const conversation = await Conversation.findOne({
                 _id:id,
             })
             const{type} = conversation;
             if(type){
                 const inFoGroup = await this.getInfoGroup(conversation);
-                // inFo.length = 0;
-                // inFo.push(inFoGroup);
                 listInfo.push(inFoGroup);
             }else{
                 var rs = await this.getInfoIndividual(id,userId);
                 listInfo.push(rs);
             }
             await this.updateNumberUnread(id, userId);
-            
         }
-        
-
+    
         let conversations = await Conversation.getAllConversation(
             userId,
             skip,
             limit
         );
-
         let rss =[] ;
 
         if (!conversations || !listInfo)
