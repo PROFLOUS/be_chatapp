@@ -81,10 +81,11 @@ const FriendService = {
     await friend.save();
 
     const conversationService = new ConversationService();
-    return await conversationService.createIndividualConversationWhenWasFriend(
-      user,
-      sender
-    );
+    // return await conversationService.createIndividualConversationWhenWasFriend(
+    //   user,
+    //   sender
+    // );
+    return friend;
   },
   deleteFriendInvite: async (_id, senderId) => {
     await FriendReq.deleteByIds(senderId, _id);
@@ -154,49 +155,30 @@ const FriendService = {
 
     const listInviteResult = [];
     var invite = null;
-
     for (const listInvite of listInviteId) {
       var inviteId = listInvite.senderId;
       const array = await FirebaseService.getById(listInvite.senderId).then(
         (result) => {
-          return result.data();
+          return { ...result };
         }
       );
-      if (typeof array === "undefined") {
-        invite = {
-          //  inviteId.senderId,
-          inviteId,
-          firstName: "",
-          lastName: "",
-          email: "",
-          avatar: "",
-          numCommonGroup: await MeService.getNumberCommonGroup(_id, inviteId),
+      console.log("user", array);
 
-          numCommonFriend: await MeService.getNumberCommonFriend(
-            _id,
-            listInvite.senderId
-          ),
-        };
-      } else {
-        console.log("usreFirebase", array);
-        // var numCommonGroup =0;
-        //var numGroup = await MeService.getNumberCommonGroup(_id,inId)
-        invite = {
-          //  inviteId.senderId,
-          inviteId,
-          firstName: array.first_name,
-          lastName: array.last_name,
-          email: array.email,
-          avatar: array.avatar,
-          numCommonGroup: await MeService.getNumberCommonGroup(_id, inviteId),
+      console.log("usreFirebase", array);
+      // var numCommonGroup =0;
+      //var numGroup = await MeService.getNumberCommonGroup(_id,inId)
+      invite = {
+        //  inviteId.senderId,
+        inviteId,
+        ...array,
+        numCommonGroup: await MeService.getNumberCommonGroup(_id, inviteId),
 
-          numCommonFriend: await MeService.getNumberCommonFriend(
-            _id,
-            listInvite.senderId
-          ),
-          //...array,
-        };
-      }
+        numCommonFriend: await MeService.getNumberCommonFriend(
+          _id,
+          listInvite.senderId
+        ),
+      };
+
       listInviteResult.push(invite);
       console.log("senderID" + listInvite.senderId);
     }

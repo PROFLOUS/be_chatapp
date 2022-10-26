@@ -1,5 +1,6 @@
 const friendService = require("../services/FriendService");
 const MeService = require("../services/CommonService");
+const FirebaseService = require("../services/FirebaseService");
 
 class FriendController {
   constructor(io) {
@@ -79,20 +80,21 @@ class FriendController {
   async acceptFriend(req, res, next) {
     // const {_id,frenAva,frenLastName,frenFirstNam}=req.body;
     // id friend
-
-    const user = {
-      userId: req.body.userId,
-      userFistName: req.body.userFistName,
-      userLastName: req.body.userLastName,
-      avaUser: req.body.avaUser,
-    };
-
-    const sender = {
-      userId: req.params.userId,
-      userFistName: req.body.userFistName2,
-      userLastName: req.body.userLastName2,
-      avaUser: req.body.avaUser2,
-    };
+    const { userId } = req.params;
+    const { id } = req.body;
+    const user = await FirebaseService.getById(id).then((result) => {
+      if (result.avaUser.length == 0) {
+        result.avaUser = "default";
+      }
+      return { ...result, userId: id };
+    });
+    console.log("user: ", user);
+    const sender = await FirebaseService.getById(userId).then((result) => {
+      if (result.avaUser.length == 0) {
+        result.avaUser = "default";
+      }
+      return { ...result, userId: userId };
+    });
 
     try {
       const result = await friendService.acceptFriend(user, sender);
