@@ -22,7 +22,7 @@ class ConversationController {
 
         // var page=0;
         // var size=20;
-        const {page=0, size=30} = req.query;
+        const {page, size} = req.query;
 
         try {
             const conversationService = new ConversationService();
@@ -40,7 +40,7 @@ class ConversationController {
         // const userId = req.query.userID;
         // console.log("userId");
 
-        const {page=0, size=10} = req.query;
+        const {page, size} = req.query;
         // var page=0;
         // var size=20;
         

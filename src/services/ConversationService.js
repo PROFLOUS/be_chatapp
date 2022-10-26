@@ -112,12 +112,14 @@ class ConversationService {
         await Message.countDocumentsByConversationIdAndUserId(
             conversationId
         );
+        
 
         const { skip, limit, totalPages } = commonUtils.getPagination(
             page,
             size,
             totalMessages
-        );        
+        ); 
+        console.log(skip,limit,totalPages);
 
         try {
             let messages = await Message.getListByConversationIdAndUserId(conversationId,skip,limit);
