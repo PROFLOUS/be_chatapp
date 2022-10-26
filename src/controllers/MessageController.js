@@ -109,6 +109,9 @@ class MessageController {
   async deleteMessage(req, res, next) {
     try {
       messageService.deleteMessage(req, res);
+      res.status(201).json({
+        message: "Xóa tin nhắn thành công",
+      });
     } catch (err) {
       next(err);
     }

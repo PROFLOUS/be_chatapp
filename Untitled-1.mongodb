@@ -6,51 +6,51 @@ use('test');
 
 
 
-// db.messages.aggregate([
-//         {
-//             $match: {
-//                 conversationId: ObjectId("634cd81de4f51e2813003d0c"),
-//             },
-//         },
-//         {
-//             $lookup: {
-//                 from: 'messages',
-//                 localField: 'replyMessageId',
-//                 foreignField: '_id',
-//                 as: 'replyMessage',
-//             },
-//         },
-//         {
-//             $group:{
-//                 _id: "$conversationId",
-//                 messages: {
-//                     $push: {
-//                         _id: "$_id",
-//                         userId: "$userId",
-//                         content: "$content",
-//                         createdAt: "$createdAt",
-//                         isDeleted: "$isDeleted",
-//                         reacts:"$reacts",
-//                         replyMessageId: "$replyMessage",
-//                         createdAt: "$createdAt",
-//                         type: "$type",
-//                     },
-//                 },
-//             },
-//         },{
-//             $project: {
-//                 _id: 0,
-//                 messages: 1,
-//             },
-//         },
-//         {
-//             $skip: 0,
-//         },
-//         {
-//             $limit: 20,
-//         },
+db.messages.aggregate([
+        {
+            $match: {
+                conversationId: ObjectId("6357fca23ac7316faee67e52"),
+            },
+        }
+        // {
+        //     $lookup: {
+        //         from: 'messages',
+        //         localField: 'replyMessageId',
+        //         foreignField: '_id',
+        //         as: 'replyMessage',
+        //     },
+        // },
+        // {
+        //     $group:{
+        //         _id: "$conversationId",
+        //         messages: {
+        //             $push: {
+        //                 _id: "$_id",
+        //                 userId: "$userId",
+        //                 content: "$content",
+        //                 createdAt: "$createdAt",
+        //                 isDeleted: "$isDeleted",
+        //                 reacts:"$reacts",
+        //                 replyMessageId: "$replyMessage",
+        //                 createdAt: "$createdAt",
+        //                 type: "$type",
+        //             },
+        //         },
+        //     },
+        // },{
+        //     $project: {
+        //         _id: 0,
+        //         messages: 1,
+        //     },
+        // },
+        // {
+        //     $skip: 0,
+        // },
+        // {
+        //     $limit: 20,
+        // },
         
-//     ]);
+    ]);
 
 // db.conversations.find({
 //     _id: ObjectId("63329d42ffe64c2c9e55d41a")
@@ -198,9 +198,9 @@ use('test');
 //         },
 //     },
 // ])
-db.conversations.deleteMany({})
-db.friendrequests.deleteMany({})
-db.friends.deleteMany({})
-db.members.deleteMany({})
-db.messages.deleteMany({})
+// db.conversations.deleteMany({})
+// db.friendrequests.deleteMany({})
+// db.friends.deleteMany({})
+// db.members.deleteMany({})
+// db.messages.deleteMany({})
 
