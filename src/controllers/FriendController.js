@@ -83,16 +83,16 @@ class FriendController {
     const { userId } = req.params;
     const { id } = req.body;
     const user = await FirebaseService.getById(id).then((result) => {
-      if (result.avaUser.length == 0) {
-        result.avaUser = "default";
-      }
+      // if (result.avaUser.length == 0) {
+      //   result.avaUser = "default";
+      // }
       return { ...result, userId: id };
     });
     console.log("user: ", user);
     const sender = await FirebaseService.getById(userId).then((result) => {
-      if (result.avaUser.length == 0) {
-        result.avaUser = "default";
-      }
+      // if (result.avaUser.length == 0) {
+      //   result.avaUser = "default";
+      // }
       return { ...result, userId: userId };
     });
 

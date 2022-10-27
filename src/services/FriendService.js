@@ -81,11 +81,10 @@ const FriendService = {
     await friend.save();
 
     const conversationService = new ConversationService();
-    // return await conversationService.createIndividualConversationWhenWasFriend(
-    //   user,
-    //   sender
-    // );
-    return friend;
+    return await conversationService.createIndividualConversationWhenWasFriend(
+      user,
+      sender
+    );
   },
   deleteFriendInvite: async (_id, senderId) => {
     await FriendReq.deleteByIds(senderId, _id);
