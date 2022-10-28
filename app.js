@@ -3,6 +3,8 @@ const cors = require('cors');
 const http = require('http');
 const https = require('https');
 
+// const ufs = require("url-file-size");
+
 const socketio = require('socket.io');
 const socket = require('./src/app/socket');
 const routes = require('./src/routes');
@@ -31,7 +33,9 @@ app.use(cors());
 app.use(useragent.express());
 app.use(morgan("common"));
 
-
+// ufs("https://chatapp-bucket.s3.ap-southeast-1.amazonaws.com/zale_1666861441737_08_Designing%20Office%20Business%20Applications%20%281%29.docx")
+//     .then(console.log) // 1416
+//     .catch(console.error);
 
 const serverTest = http.createServer(app);
 // const io = socketio(server);
@@ -41,14 +45,14 @@ const server = https.createServer(cred,app);
 
 const io = socketio(server,{
     cors:{
-        origin:"http://localhost:3000",
+        origin:'*',
         credentials:true
     }
 });
 
 // const io = socketio(serverTest,{
 //     cors:{
-//         origin:"http://localhost:3000",
+//         origin:'*',
 //         credentials:true
 //     }
 // });

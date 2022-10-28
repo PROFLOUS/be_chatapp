@@ -19,15 +19,15 @@ const conversationSchema = new Schema(
         {
           userId: {
             type: String,
-            required: true,
+            
           },
           userFistName: {
             type: String,
-            required: true,
+            
           },
           userLastName: {
             type: String,
-            required: true,
+            
           },
           avaUser: {
             type: String,
