@@ -17,7 +17,7 @@ const handleStart = async (user) => {
       lastLogin: new Date(),
     })}else{
     await redisDb.set(uid, {
-      user,
+      ...user,
       isOnline: true,
       lastLogin: new Date(),
     });
