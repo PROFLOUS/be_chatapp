@@ -140,7 +140,8 @@ const socket = (io) => {
           listReceiver:listConReceivers
         }); 
       })
-      io.to(idCon).emit("get-message",{senderId,message,notifi});
+      io.to(idCon).emit("get-message",{senderId,message});
+      socket.broadcast.to(idCon).emit("get-notifi",notifi);
 
 
 
@@ -195,6 +196,13 @@ const socket = (io) => {
     socket.on("get-user-online", (userId, cb) => {
       console.log("id"+userId);
       getUserOnline(userId, cb);
+    });
+
+    socket.on("reaction", ({isReaction,idConversation}) => {
+      console.log(isReaction,idConversation);
+      if(isReaction){
+        io.to(idConversation).emit("reaction",idConversation);
+      }
     });
 
      
