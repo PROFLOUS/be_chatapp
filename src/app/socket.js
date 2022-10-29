@@ -117,7 +117,7 @@ const socket = (io) => {
       console.log( socket.userId+" joinRoom: "+idCon);
     });
 
-    socket.on("send-message",async ({senderId,receiverId,message,idCon,isNew}) => {
+    socket.on("send-message",async ({senderId,receiverId,message,idCon,notifi}) => {
       console.log({message});
       socket.receiverId=receiverId
 
@@ -140,7 +140,7 @@ const socket = (io) => {
           listReceiver:listConReceivers
         }); 
       })
-      io.to(idCon).emit("get-message",{senderId,message});
+      io.to(idCon).emit("get-message",{senderId,message,notifi});
 
 
 
