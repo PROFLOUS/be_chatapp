@@ -78,26 +78,28 @@ class FriendController {
 
   // [POST] /:userId
   async acceptFriend(req, res, next) {
-    // const {_id,frenAva,frenLastName,frenFirstNam}=req.body;
-    // id friend
+    //senderId
     const { userId } = req.params;
+    //receviceId
     const { id } = req.body;
     const user = await FirebaseService.getById(id).then((result) => {
-      // if (result.avaUser.length == 0) {
-      //   result.avaUser = "default";
-      // }
       return { ...result, userId: id };
     });
     console.log("user: ", user);
     const sender = await FirebaseService.getById(userId).then((result) => {
-      // if (result.avaUser.length == 0) {
-      //   result.avaUser = "default";
-      // }
       return { ...result, userId: userId };
     });
 
     try {
+      // reurn conversationId, message
       const result = await friendService.acceptFriend(user, sender);
+      const { conversationId, message } = result;
+
+      // io.to(sender.userId).emit("acceptFriend",{user})
+
+      //send to senderUser , receviceUser, conversation
+      // io.to(userId).to(id).to(conversationId).emit(" create-conversation-was-friend",{conversationId,message});
+
       res.status(201).json(result);
     } catch (e) {
       next(e);

@@ -5,28 +5,29 @@ const ConversationService = require("../services/ConversationService");
 const LastMessageService = require("../services/LastMesageService");
 
 const handleStart = async (user) => {
-  const { uid, first_name, last_name, avatar } = user;
-  // const cachedUser = await redisDb.client.get(''+uid).then((data)=>{
-  //   return JSON.parse(data)
-  // }).catch((err)=>{
-  //   console.log(err);
-  // });
-  // if(cachedUser){
-  //   await redisDb.set(uid, {
-  //     ...cachedUser,
-  //     isOnline: true,
-  //     lastLogin: new Date(),
-  //   });
-  // }else{
-  await redisDb.set(uid, {
-    uid,
-    first_name,
-    last_name,
-    avatar,
-    isOnline: true,
-    lastLogin: new Date(),
-  });
-  // }
+  const { uid } = user;
+  const cachedUser = await redisDb.client
+    .get("" + uid)
+    .then((data) => {
+      return JSON.parse(data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  if (cachedUser) {
+    await redisDb.set(uid, {
+      ...cachedUser,
+      isOnline: true,
+      lastLogin: new Date(),
+    });
+  } else {
+    await redisDb.set(uid, {
+      ...user,
+      isOnline: true,
+      lastLogin: new Date(),
+    });
+  }
+
   // await redisDb.set(uid, {
   //   uid,
   //   first_name,
@@ -68,8 +69,15 @@ const handleEnd = async (userId) => {
     });
 };
 
-const getListUserOnline = async (userId, cb) => {
-  const cachedUser = await redisDb.get(userId);
+const getUserOnline = async (userId, cb) => {
+  const cachedUser = await redisDb.client
+    .get("" + userId)
+    .then((data) => {
+      return JSON.parse(data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 
   if (cachedUser) {
     const { isOnline, lastLogin } = cachedUser;
@@ -79,32 +87,39 @@ const getListUserOnline = async (userId, cb) => {
 
 const socket = (io) => {
   io.on("connection", (socket) => {
-    console.log(socket.id + " Connected");
-
     socket.on("start", (user) => {
       const { uid } = user;
       socket.userId = uid;
       socket.join(uid);
+      console.log(socket.userId + " Connected");
       handleStart(user);
+    });
+
+    socket.on("out", () => {
+      const userId = socket.userId;
+      console.log(socket.id + " Disconnected");
+      if (userId) handleEnd(userId);
     });
 
     socket.on("disconnect", () => {
       const userId = socket.userId;
+
       console.log(socket.id + " Disconnected");
 
       if (userId) handleEnd(userId);
     });
 
     socket.on("join-conversations", (conversationIds) => {
-      console.log("chayy");
-      console.log("all1" + conversationIds);
+      // console.log("chayy");
+      // console.log("all1"+conversationIds);
+
       conversationIds.forEach((id) => {
         socket.join(id);
         console.log(socket.userId + "joinSuccess:" + id + "\n");
       });
     });
 
-    socket.on("join-room", ({ idCon, isNew }) => {
+    socket.on("join-room", ({ idCon }) => {
       console.log("join");
       socket.join(idCon);
       console.log(socket.userId + " joinRoom: " + idCon);
@@ -116,32 +131,49 @@ const socket = (io) => {
         console.log({ message });
         socket.receiverId = receiverId;
 
-        io.to(socket.receiverId)
-          .to(socket.userId)
-          .emit("get-message", { senderId, message });
         const conversationService = new ConversationService();
-        const listConSender = await conversationService.getAllConversation(
-          senderId
-        );
-        const listConReceiver = await conversationService.getAllConversation(
-          receiverId
-        );
 
-        // if(isNew){
-        //   console.log("new");
-        //   io.emit("get-last-message",{
-        //     listSender:listConSender.data,
-        //     listReceiver:listConReceiver.data
+        const listConSender = conversationService
+          .getAllConversation(senderId)
+          .then((data) => {
+            return data.data;
+          });
+        const listConReceiver = conversationService
+          .getAllConversation(receiverId)
+          .then((data) => {
+            return data.data;
+          });
 
-        //   })
-        //   isNew = false;
-        // }else{
-
-        io.to(socket.receiverId).to(socket.userId).emit("get-last-message", {
-          listSender: listConSender.data,
-          listReceiver: listConReceiver.data,
+        Promise.all([listConSender, listConReceiver]).then((data) => {
+          const listConSenders = data[0];
+          const listConReceivers = data[1];
+          io.to(idCon).emit("get-last-message", {
+            listSender: listConSenders,
+            listReceiver: listConReceivers,
+          });
         });
-        console.log("last");
+        io.to(idCon).emit("get-message", { senderId, message });
+
+        // console.log(listConSender,listConReceiver);
+
+        // const listConSender = await conversationService.getAllConversation(senderId);
+        // const listConReceiver = await conversationService.getAllConversation(receiverId);
+
+        // // if(isNew){
+        // //   console.log("new");
+        // //   io.emit("get-last-message",{
+        // //     listSender:listConSender.data,
+        // //     listReceiver:listConReceiver.data
+
+        // //   })
+        // //   isNew = false;
+        // // }else{
+
+        // io.to(idCon).emit("get-last-message",{
+        //   listSender:listConSender,
+        //   listReceiver:listConReceiver
+        // });
+
         // }
       }
     );
@@ -157,12 +189,18 @@ const socket = (io) => {
     });
 
     socket.on("seen-message", async ({ conversationId, userId }) => {
+      console.log("seen");
       const conversationService = new ConversationService();
       await LastMessageService.updateLastMessage(conversationId, userId);
       const listConSender = await conversationService.getAllConversation(
         userId
       );
-      io.to(socket.id).emit("get-last", listConSender.data);
+      io.to(conversationId).emit("get-last", listConSender.data);
+    });
+
+    socket.on("get-user-online", (userId, cb) => {
+      console.log("id" + userId);
+      getUserOnline(userId, cb);
     });
   });
 };

@@ -40,12 +40,7 @@ class ConversationController {
   // [GET] /
   async getAll(req, res, next) {
     let userId = req.params.userId;
-    // const userId = req.query.userID;
-    // console.log("userId");
-
     const { page, size } = req.query;
-    // var page=0;
-    // var size=20;
 
     try {
       const conversationService = new ConversationService();
@@ -140,15 +135,65 @@ class ConversationController {
     }
   }
 
-  async createGroupConversation(req, res, next) {
-    const { userO, name = "", userList = [] } = req.body;
+  // [DELETE] /:id/messages
+  async deleteAllMessage(req, res, next) {
+    const { id } = req.params;
+    const { userId } = req.body;
     const conversationService = new ConversationService();
 
     try {
+      const rs = await conversationService.deleteAllMessage(id, userId);
+      res.status(201).json(rs);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async createGroupConversation(req, res, next) {
+    const { userId, name = "", userList = [] } = req.body;
+    const conversationService = new ConversationService();
+
+    const userSeltFb = await redisDb.client
+      .get("" + userId)
+      .then((data) => {
+        return JSON.parse(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    const userSelt = {
+      userId: userSeltFb.uid,
+      userFistName: userSeltFb.first_name,
+      userLastName: userSeltFb.last_name,
+      avaUser: userSeltFb.avatar,
+    };
+
+    // info user in room
+    let userInRoom = [];
+
+    for (let i = 0; i < userList.length; i++) {
+      const user = await redisDb.client
+        .get("" + userList[i])
+        .then((data) => {
+          return JSON.parse(data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      const userIn = {
+        userId: user.uid,
+        userFistName: user.first_name,
+        userLastName: user.last_name,
+        avaUser: user.avatar,
+      };
+      userInRoom.push(userIn);
+    }
+    try {
       const rs = await conversationService.createGroupConversation(
-        userO,
+        userSelt,
         name,
-        userList
+        userInRoom
       );
       res.status(201).json(rs);
     } catch (err) {

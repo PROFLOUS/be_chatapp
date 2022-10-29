@@ -10,7 +10,11 @@ use('test');
 //         {
 //             $match: {
 //                 conversationId: ObjectId("6357fca23ac7316faee67e52"),
+//                 deletedUserIds: {
+//                     $nin: ["C6LwvHCSBagEyr1QCneUgEaSuau1"],
+//                 },
 //             },
+            
 //         },
 //         {
 //             $lookup: {
@@ -36,6 +40,7 @@ use('test');
 //                         content: "$content",
 //                         createdAt: "$createdAt",
 //                         isDeleted: "$isDeleted",
+//                         deletedByUserIds: "$deletedByUserIds",
 //                         reacts:"$reacts",
 //                         replyMessageId: "$replyMessage",
 //                         createdAt: "$createdAt",
@@ -50,14 +55,6 @@ use('test');
 //                 messages: 1,
 //             },
 //         },
-        
-//         // // {
-//         // //     $skip: 10,
-//         // // },
-//         // {
-//         //     $limit: 2,
-//         // },
-        
 //     ]);
 
 // db.conversations.find({
@@ -87,8 +84,15 @@ use('test');
 
 
 // db.conversations.find({
-//     "members.userId":{$all:["Ix7UVDUIrmRYOB6uGFc715drn2H4","ztpYIbpqoiYVDVsf0h9Clzg7QgW2"]}
-// }
+//     "type": false,
+//     "members.userId":{$all:["gJ05sRgJe9bxntIWSXOE8T9KmSP2","ZhPbnYiikUaSi65ZWwOlvqWsFE53"]}
+// })
+
+// db.messages.updateMany(
+//     {
+//          conversationId:ObjectId("6357fca23ac7316faee67e52"),deletedByUserIds:{ $nin: ["C6LwvHCSBagEyr1QCneUgEaSuau1"]  }
+//     },
+//     { $push: { deletedByUserIds: "C6LwvHCSBagEyr1QCneUgEaSuau1" } }
 // )
 
 // db.messages.countDocuments({
@@ -107,68 +111,66 @@ use('test');
 //     "conversationId":ObjectId("63214e5ff15b81ae2fce55f4")
 // })
 
-db.conversations.aggregate([
-    {
-        $match: {
-            "members.userId":{$in:["ZhPbnYiikUaSi65ZWwOlvqWsFE53"]}
-        },
-    },
-    {
-        $lookup: {
-            from: 'messages',
-            localField: 'lastMessageId',
-            foreignField: '_id',
-            as: 'lastMessage',
-        },
-    },
-    {
-        $lookup: {
-            from: 'members',
-            localField: '_id',
-            foreignField: 'conversationId',
-            as: 'mb',
-        },
-    },
-    {
-        $unwind: "$mb",
-    },
-    {
-        $match: {
-            "mb.userId":"ZhPbnYiikUaSi65ZWwOlvqWsFE53"
-        },
-    },
-    {
-        $project: {
-            name: 1,
-            avatar: 1,
-            lastMessage: {
-                userId: 1,
-                content: 1,
-                type: 1,
-                updatedAt: 1,
-            },
-            mb:{
-                numberUnread:1,
-            },
-            // mb:1,
-            type: 1,
-        }
-    },
+// db.conversations.aggregate([
+//     {
+//         $match: {
+//             "members.userId":{$in:["lHSkYpeKRxXQa4zZosfubGEH5aY2"]}
+//         },
+//     },
+//     {
+//         $lookup: {
+//             from: 'messages',
+//             localField: 'lastMessageId',
+//             foreignField: '_id',
+//             as: 'lastMessage',
+//         },
+//     },
+//     {
+//         $lookup: {
+//             from: 'members',
+//             localField: '_id',
+//             foreignField: 'conversationId',
+//             as: 'mb',
+//         },
+//     },
+//     {
+//         $unwind: "$mb",
+//     },
+//     {
+//         $match: {
+//             "mb.userId":"lHSkYpeKRxXQa4zZosfubGEH5aY2"
+//         },
+//     },
+//     {
+//         $project: {
+//             name: 1,
+//             avatar: 1,
+//             lastMessage: {
+//                 userId: 1,
+//                 content: 1,
+//                 type: 1,
+//                 updatedAt: 1,
+//             },
+//             mb:{
+//                 numberUnread:1,
+//             },
+//             // mb:1,
+//             type: 1,
+//         }
+//     },
+//     {
+//       $sort: {
+//         "lastMessage.updatedAt": -1,
+//       },
+//     },
+//     {
+//         $skip: 0,
+//     },
+//     {
+//         $limit: 20,
+//     },
     
-    
-    {
-      $sort: {
-        "lastMessage.updatedAt": -1,
-      },
-    },
-    {
-        $skip: 1,
-    },
-    {
-        $limit: 2,
-    },
-    
-])
+// ])
 
 // db.conversations.countDocuments({
 //     "members.userId":{$in:[ObjectId("63181c892499351136c9da51")]}
@@ -206,9 +208,9 @@ db.conversations.aggregate([
 //         },
 //     },
 // ])
-// db.conversations.deleteMany({})
-// db.friendrequests.deleteMany({})
-// db.friends.deleteMany({})
-// db.members.deleteMany({})
-// db.messages.deleteMany({})
+db.conversations.deleteMany({})
+db.friendrequests.deleteMany({})
+db.friends.deleteMany({})
+db.members.deleteMany({})
+db.messages.deleteMany({})
 

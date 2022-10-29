@@ -60,6 +60,7 @@ messageSchema.statics.countDocumentsByConversationIdAndUserId = async (
 //list conversation individual
 messageSchema.statics.getListByConversationIdAndUserId = async (
   conversationId,
+  userId,
   skip,
   limit
 ) => {
@@ -67,6 +68,9 @@ messageSchema.statics.getListByConversationIdAndUserId = async (
     {
       $match: {
         conversationId: ObjectId(conversationId),
+        deletedUserIds: {
+          $nin: [userId],
+        },
       },
     },
     {

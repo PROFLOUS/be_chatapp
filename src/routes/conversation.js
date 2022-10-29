@@ -22,8 +22,17 @@ const conversationRouter = (io) => {
   // create a new group conversation
   router.post("/groups", conversationController.createGroupConversation);
 
-  // get list members
-  router.get("/members/:id", conversationController.getMembers);
+  // create a new conversation individual
+  router.post(
+    "/individuals/:userId",
+    conversationController.createIndividualConversation
+  );
+
+  // delete a conversation
+  router.delete("/:id/messages", conversationController.deleteAllMessage);
+
+  // create a new group conversation
+  router.post("/groups", conversationController.createGroupConversation);
 
   // add members
   router.post("/members/:id", conversationController.addMembers);

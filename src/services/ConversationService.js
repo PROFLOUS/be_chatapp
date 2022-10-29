@@ -43,6 +43,7 @@ class ConversationService {
     const { _id, name, avatar } = conversation;
     let groupName = "";
     let groupAvatar = [];
+    let userInfo;
 
     if (!name || !avatar) {
       const nameAndAvataresOfGroup = await Conversation.findOne(
@@ -50,11 +51,15 @@ class ConversationService {
         {
           _id: 0,
           members: {
+            userFistName: 1,
             userLastName: 1,
             avaUser: 1,
+            userId: 1,
           },
         }
       ).distinct("members");
+
+      userInfo = nameAndAvataresOfGroup;
       for (const tempt of nameAndAvataresOfGroup) {
         const nameTempt = tempt.userLastName;
         const { avaUser } = tempt;
@@ -66,6 +71,8 @@ class ConversationService {
     const result = {
       name,
       avatar,
+      idCon: _id,
+      userInfo,
     };
 
     result.avatar = groupAvatar;
@@ -121,6 +128,7 @@ class ConversationService {
     try {
       let messages = await Message.getListByConversationIdAndUserId(
         conversationId,
+        userId,
         skip,
         limit
       );
@@ -160,6 +168,7 @@ class ConversationService {
       size,
       totalCon
     );
+
     const consId = await Conversation.find({
       "members.userId": { $in: [userId] },
     });
@@ -177,6 +186,7 @@ class ConversationService {
         var rs = await this.getInfoIndividual(id, userId);
         listInfo.push(rs);
       }
+
       await this.updateNumberUnread(id, userId);
     }
 
@@ -185,10 +195,10 @@ class ConversationService {
       skip,
       limit
     );
-    let rss = [];
 
+    let rss = [];
     if (!conversations || !listInfo)
-      throw new MyError("File, Type or ConversationId not exists");
+      throw new MyError(" ConversationId not exists");
     for (let i = 0; i < conversations.length; i++) {
       for (let j = 0; j < listInfo.length; j++) {
         if (conversations[i]._id.toString() === listInfo[j].idCon.toString()) {
@@ -199,7 +209,6 @@ class ConversationService {
         }
       }
     }
-
     return {
       data: rss,
       page,
@@ -210,68 +219,76 @@ class ConversationService {
 
   async checkConversation(senderID, receiverID) {
     const conversation = await Conversation.findOne({
+      type: false,
       "members.userId": { $all: [senderID, receiverID] },
     });
     if (conversation) {
       return conversation._id;
     }
-    return false;
+    return null;
   }
 
   // return id conversation
   async createIndividualConversation(user1, user2) {
-    // add new conversation
-    const newConversation = new Conversation({
-      // name: user2.userLastName,
-      // avatar: user2.avaUser,
-      members: [user1, user2],
-      type: false,
-    });
-    const saveConversation = await newConversation.save();
-    const { _id } = saveConversation;
+    const check = await this.checkConversation(user1.userId, user2.userId);
+    if (!check) {
+      // add new conversation
+      const newConversation = new Conversation({
+        // name: user2.userLastName,
+        // avatar: user2.avaUser,
+        members: [user1, user2],
+        type: false,
+      });
+      const saveConversation = await newConversation.save();
+      const { _id } = saveConversation;
 
-    // tạo 2 member
-    const member1 = new Member({
-      conversationId: _id,
-      userId: user1.userId,
-    });
+      // tạo 2 member
+      const member1 = new Member({
+        conversationId: _id,
+        userId: user1.userId,
+      });
 
-    const member2 = new Member({
-      conversationId: _id,
-      userId: user2.userId,
-    });
+      const member2 = new Member({
+        conversationId: _id,
+        userId: user2.userId,
+      });
 
-    // save
-    await member1.save();
-    await member2.save();
+      // save
+      await member1.save();
+      await member2.save();
 
-    return _id;
+      return _id;
+    } else {
+      return { _id: check };
+    }
   }
 
-  async createGroupConversation(userO, name, userList) {
-    var uss = userList.map((us) => us.userId);
+  async createGroupConversation(userSelt, name, userInRoom) {
+    var uss = userInRoom.map((us) => us.userId);
 
-    const users = [userO.userId, ...uss];
+    const users = [userSelt.userId, ...uss];
+
+    console.log(users);
 
     // add new conversation
     const newConversation = new Conversation({
       name,
-      leaderId: userO.userId,
-      members: [userO, ...userList],
+      leaderId: userSelt.userId,
+      members: [userSelt, ...userInRoom],
       type: true,
     });
     const saveConversation = await newConversation.save();
     const { _id } = saveConversation;
 
     const newMessage = new Message({
-      userId: userO.userId,
+      userId: userSelt.userId,
       content: "Đã tạo nhóm",
       type: "NOTIFY",
       conversationId: _id,
     });
 
     await newMessage.save();
-    const { _id: mesId } = newMessage;
+    const mesId = newMessage._id;
 
     await Conversation.updateOne({ _id }, { lastMessageId: mesId });
 
@@ -388,6 +405,14 @@ class ConversationService {
     // update last view
     await Member.updateOne({ conversationId, userId }, { lastView: createdAt });
 
+    return true;
+  }
+
+  async deleteAllMessage(conversationId, userId) {
+    await Message.updateMany(
+      { conversationId, deletedUserIds: { $nin: [userId] } },
+      { $push: { deletedUserIds: userId } }
+    );
     return true;
   }
 
