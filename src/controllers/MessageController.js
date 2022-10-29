@@ -116,6 +116,17 @@ class MessageController {
       next(err);
     }
   }
+
+
+  //lay tin nhan theo loai
+  async getMessageByType(req, res, next) {
+    try {
+       messageService.getMessageByType(req, res);
+    } catch (err) {
+        next(err);
+    }
+}
+
 }
 
 module.exports = MessageController;

@@ -25,6 +25,8 @@ const messageRouter = (io) => {
   router.post("/reMessage", messageController.reMessage);
   //xoa tin nhan
   router.post("/deleteMessage", messageController.deleteMessage);
+  //lay tin nhan theo loai
+  router.get('/getMessageByType/:conversationId/:typeMessage', messageController.getMessageByType);
   return router;
 };
 

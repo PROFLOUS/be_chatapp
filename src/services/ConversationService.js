@@ -49,6 +49,7 @@ class ConversationService {
         let groupName = '';
         let groupAvatar = [];
         let userInfo;
+        let leaderId;
 
         if (!name || !avatar) {
             const nameAndAvataresOfGroup =
@@ -73,7 +74,7 @@ class ConversationService {
             name,
             avatar,
             idCon: _id,
-            userInfo
+            userInfo,
         };
 
         result.avatar = groupAvatar;

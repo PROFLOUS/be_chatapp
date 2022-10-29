@@ -140,8 +140,8 @@ const socket = (io) => {
           listReceiver:listConReceivers
         }); 
       })
-      io.to(idCon).emit("get-message",{senderId,message});
-      socket.broadcast.to(idCon).emit("get-notifi",notifi);
+      io.to(idCon).emit("get-message",{senderId,message,notifi});
+     
 
 
 
