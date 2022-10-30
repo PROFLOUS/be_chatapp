@@ -95,14 +95,14 @@ class FriendController {
       const result = await friendService.acceptFriend(user, sender);
       const { conversationId, message } = result;
 
-      this.io.to(sender.userId).emit("acceptFriend", { user });
+      this.io.to(sender.userId).emit("acceptFriend", user);
 
       //send to senderUser , receviceUser, conversation
       this.io
         .to(userId)
         .to(id)
         .to(conversationId)
-        .emit(" create-conversation-was-friend", { conversationId, message });
+        .emit(" create-conversation-was-friend", conversationId, message);
 
       res.status(201).json(result);
     } catch (e) {
@@ -149,7 +149,7 @@ class FriendController {
     try {
       await friendService.sendFriendInvite(id, userId);
 
-      this.io.to(userId).emit("send-friend-invite", { user });
+      this.io.to(userId).emit("send-friend-invite", user);
 
       res.status(201).json();
     } catch (err) {
