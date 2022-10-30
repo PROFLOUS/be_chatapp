@@ -72,7 +72,7 @@ const FriendService = {
     //     throw new MyError('Friend exists');
 
     // delete xoa loi moi
-    await FriendReq.deleteByIds(user.userId, sender.userId);
+    await FriendReq.deleteByIds(sender.userId, user.userId);
 
     // add friend
     const friend = new Friend({
