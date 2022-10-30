@@ -6,7 +6,7 @@ class FriendController {
   constructor(io) {
     this.io = io;
     this.acceptFriend = this.acceptFriend.bind(this);
-    // this.sendFriendInvite = this.sendFriendInvite.bind(this);
+    this.sendFriendInvite = this.sendFriendInvite.bind(this);
     this.deleteFriend = this.deleteFriend.bind(this);
     // this.deleteFriendInvite = this.deleteFriendInvite.bind(this);
     // this.deleteInviteWasSend = this.deleteInviteWasSend.bind(this);
@@ -95,10 +95,14 @@ class FriendController {
       const result = await friendService.acceptFriend(user, sender);
       const { conversationId, message } = result;
 
-      // io.to(sender.userId).emit("acceptFriend",{user})
+      this.io.to(sender.userId).emit("acceptFriend", { user });
 
       //send to senderUser , receviceUser, conversation
-      // io.to(userId).to(id).to(conversationId).emit(" create-conversation-was-friend",{conversationId,message});
+      this.io
+        .to(userId)
+        .to(id)
+        .to(conversationId)
+        .emit(" create-conversation-was-friend", { conversationId, message });
 
       res.status(201).json(result);
     } catch (e) {
@@ -145,7 +149,7 @@ class FriendController {
     try {
       await friendService.sendFriendInvite(id, userId);
 
-      this.io.to(userId).emit("send-friend-invite", { _id, user });
+      this.io.to(userId).emit("send-friend-invite", { user });
 
       res.status(201).json();
     } catch (err) {
