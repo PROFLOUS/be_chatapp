@@ -139,13 +139,13 @@ class FriendController {
     const { id = "" } = req.body;
     console.log("iduser", id);
     const userId = req.params.userId;
+    const user = await FirebaseService.getById(id).then((result) => {
+      return { ...result, userId: id };
+    });
     try {
       await friendService.sendFriendInvite(id, userId);
 
-      // const { name, avatar } = await redisDb.get(_id);
-      // this.io
-      //     .to(userId + '')
-      //     .emit('send-friend-invite', { _id, name, avatar });
+      this.io.to(userId).emit("send-friend-invite", { _id, user });
 
       res.status(201).json();
     } catch (err) {
