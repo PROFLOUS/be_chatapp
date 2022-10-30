@@ -117,7 +117,7 @@ const socket = (io) => {
       console.log( socket.userId+" joinRoom: "+idCon);
     });
 
-    socket.on("send-message",async ({senderId,receiverId,message,idCon,notifi}) => {
+    socket.on("send-message",async ({senderId,receiverId,message,idCon,name,avatar}) => {
       console.log({message});
       socket.receiverId=receiverId
 
@@ -140,33 +140,9 @@ const socket = (io) => {
           listReceiver:listConReceivers
         }); 
       })
-      io.to(idCon).emit("get-message",{senderId,message,notifi});
-     
 
-
-
-      // console.log(listConSender,listConReceiver);
-
-      // const listConSender = await conversationService.getAllConversation(senderId);
-      // const listConReceiver = await conversationService.getAllConversation(receiverId);
-
-
-      // // if(isNew){
-      // //   console.log("new");
-      // //   io.emit("get-last-message",{
-      // //     listSender:listConSender.data,
-      // //     listReceiver:listConReceiver.data
-          
-      // //   })
-      // //   isNew = false;
-      // // }else{
-        
-        // io.to(idCon).emit("get-last-message",{
-        //   listSender:listConSender,
-        //   listReceiver:listConReceiver
-        // }); 
-        
-      // }
+      socket.broadcast.to(idCon).emit("get-notifi",{message,name,avatar});
+      io.to(idCon).emit("get-message",{senderId,message,name});
       
     });
 
@@ -203,6 +179,14 @@ const socket = (io) => {
       if(isReaction){
         io.to(idConversation).emit("reaction",idConversation);
       }
+    });
+
+    socket.on("typing", (idConversation) => {
+      socket.broadcast.to(idConversation).emit("typing");
+    });
+
+    socket.on("stop-typing", (idConversation) => {
+      socket.broadcast.to(idConversation).emit("stop-typing");
     });
 
      
