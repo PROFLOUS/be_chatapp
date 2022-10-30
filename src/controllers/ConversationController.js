@@ -217,10 +217,29 @@ class ConversationController {
     const { id } = req.params;
     const { members = [], userId } = req.body;
 
+    let memberInRoom = [];
+    for (let i = 0; i < members.length; i++) {
+      const user = await redisDb.client
+        .get("" + members[i])
+        .then((data) => {
+          return JSON.parse(data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      const userIn = {
+        userId: user.uid,
+        userFistName: user.first_name,
+        userLastName: user.last_name,
+        avaUser: user.avatar,
+      };
+      memberInRoom.push(userIn);
+    }
+
     const conversationService = new ConversationService();
 
     try {
-      const rs = await conversationService.addMembers(id, members, userId);
+      const rs = await conversationService.addMembers(id, memberInRoom, userId);
       res.json(rs);
     } catch (err) {
       next(err);

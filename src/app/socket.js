@@ -1,6 +1,5 @@
 // const redisService = require('../services/redisService');
 const redisDb = require("../app/redis");
-
 const ConversationService = require("../services/ConversationService");
 const LastMessageService = require("../services/LastMesageService");
 
@@ -105,14 +104,12 @@ const socket = (io) => {
       const userId = socket.userId;
 
       console.log(socket.id + " Disconnected");
-
       if (userId) handleEnd(userId);
     });
 
     socket.on("join-conversations", (conversationIds) => {
       // console.log("chayy");
       // console.log("all1"+conversationIds);
-
       conversationIds.forEach((id) => {
         socket.join(id);
         console.log(socket.userId + "joinSuccess:" + id + "\n");
@@ -127,54 +124,50 @@ const socket = (io) => {
 
     socket.on(
       "send-message",
-      async ({ senderId, receiverId, message, idCon, isNew }) => {
-        console.log({ message });
-        socket.receiverId = receiverId;
+      async ({
+        senderId,
+        receiverId,
+        message,
+        idCon,
+        name,
+        avatar,
+        isGroup,
+        nameGroup,
+      }) => {
+        if (isGroup) {
+          io.to(idCon).emit("get-message", { senderId, message, isGroup });
+          socket.broadcast
+            .to(idCon)
+            .emit("get-notifiGr", { message, name, avatar, nameGroup });
+        } else {
+          socket.receiverId = receiverId;
+          const conversationService = new ConversationService();
 
-        const conversationService = new ConversationService();
+          const listConSender = conversationService
+            .getAllConversation(senderId)
+            .then((data) => {
+              return data.data;
+            });
+          const listConReceiver = conversationService
+            .getAllConversation(receiverId)
+            .then((data) => {
+              return data.data;
+            });
 
-        const listConSender = conversationService
-          .getAllConversation(senderId)
-          .then((data) => {
-            return data.data;
+          Promise.all([listConSender, listConReceiver]).then((data) => {
+            const listConSenders = data[0];
+            const listConReceivers = data[1];
+            io.to(idCon).emit("get-last-message", {
+              listSender: listConSenders,
+              listReceiver: listConReceivers,
+            });
           });
-        const listConReceiver = conversationService
-          .getAllConversation(receiverId)
-          .then((data) => {
-            return data.data;
-          });
 
-        Promise.all([listConSender, listConReceiver]).then((data) => {
-          const listConSenders = data[0];
-          const listConReceivers = data[1];
-          io.to(idCon).emit("get-last-message", {
-            listSender: listConSenders,
-            listReceiver: listConReceivers,
-          });
-        });
-        io.to(idCon).emit("get-message", { senderId, message });
-
-        // console.log(listConSender,listConReceiver);
-
-        // const listConSender = await conversationService.getAllConversation(senderId);
-        // const listConReceiver = await conversationService.getAllConversation(receiverId);
-
-        // // if(isNew){
-        // //   console.log("new");
-        // //   io.emit("get-last-message",{
-        // //     listSender:listConSender.data,
-        // //     listReceiver:listConReceiver.data
-
-        // //   })
-        // //   isNew = false;
-        // // }else{
-
-        // io.to(idCon).emit("get-last-message",{
-        //   listSender:listConSender,
-        //   listReceiver:listConReceiver
-        // });
-
-        // }
+          socket.broadcast
+            .to(idCon)
+            .emit("get-notifi", { message, name, avatar });
+          io.to(idCon).emit("get-message", { senderId, message, name });
+        }
       }
     );
 
@@ -192,15 +185,29 @@ const socket = (io) => {
       console.log("seen");
       const conversationService = new ConversationService();
       await LastMessageService.updateLastMessage(conversationId, userId);
-      const listConSender = await conversationService.getAllConversation(
-        userId
-      );
-      io.to(conversationId).emit("get-last", listConSender.data);
+      // const listConSender = await conversationService.getAllConversation(userId);
+      // io.to(conversationId).emit("get-last",listConSender.data);
+      io.to(conversationId).emit("get-last");
     });
 
     socket.on("get-user-online", (userId, cb) => {
       console.log("id" + userId);
       getUserOnline(userId, cb);
+    });
+
+    socket.on("reaction", ({ isReaction, idConversation }) => {
+      console.log(isReaction, idConversation);
+      if (isReaction) {
+        io.to(idConversation).emit("reaction", idConversation);
+      }
+    });
+
+    socket.on("typing", (idConversation) => {
+      socket.broadcast.to(idConversation).emit("typing");
+    });
+
+    socket.on("stop-typing", (idConversation) => {
+      socket.broadcast.to(idConversation).emit("stop-typing");
     });
   });
 };

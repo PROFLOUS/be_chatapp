@@ -147,6 +147,7 @@ conversationSchema.statics.getAllConversation = async (userId, skip, limit) => {
           numberUnread: 1,
         },
         type: 1,
+        leaderId:1
       },
     },
     {

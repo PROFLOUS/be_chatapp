@@ -44,6 +44,7 @@ class ConversationService {
     let groupName = "";
     let groupAvatar = [];
     let userInfo;
+    let leaderId;
 
     if (!name || !avatar) {
       const nameAndAvataresOfGroup = await Conversation.findOne(
@@ -259,7 +260,7 @@ class ConversationService {
 
       return _id;
     } else {
-      return { _id: check };
+      return { id: check };
     }
   }
 
