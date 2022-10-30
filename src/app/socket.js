@@ -117,10 +117,14 @@ const socket = (io) => {
       console.log( socket.userId+" joinRoom: "+idCon);
     });
 
-    socket.on("send-message",async ({senderId,receiverId,message,idCon,name,avatar}) => {
-      console.log({message});
-      socket.receiverId=receiverId
-
+    socket.on("send-message",async ({senderId,receiverId,message,idCon,name,avatar,isGroup,nameGroup}) => {
+      
+      if(isGroup){
+        io.to(idCon).emit("get-message",{senderId,message,isGroup});
+        socket.broadcast.to(idCon).emit("get-notifiGr",{message,name,avatar,nameGroup});
+      }
+      else{
+        socket.receiverId=receiverId
       const conversationService = new ConversationService();
 
       const listConSender =conversationService.getAllConversation(senderId)
@@ -143,6 +147,7 @@ const socket = (io) => {
 
       socket.broadcast.to(idCon).emit("get-notifi",{message,name,avatar});
       io.to(idCon).emit("get-message",{senderId,message,name});
+      }
       
     });
 
@@ -164,8 +169,10 @@ const socket = (io) => {
       console.log("seen");
       const conversationService = new ConversationService(); 
       await LastMessageService.updateLastMessage(conversationId,userId);
-      const listConSender = await conversationService.getAllConversation(userId);
-      io.to(conversationId).emit("get-last",listConSender.data,);
+      // const listConSender = await conversationService.getAllConversation(userId);
+      // io.to(conversationId).emit("get-last",listConSender.data);
+      io.to(conversationId).emit("get-last");
+
     })
 
 
