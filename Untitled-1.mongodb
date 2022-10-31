@@ -83,15 +83,15 @@ use('test');
 // ])
 
 
-// db.conversations.find({
-//     "type": false,
-//     "members.userId":{$all:["gJ05sRgJe9bxntIWSXOE8T9KmSP2","ZhPbnYiikUaSi65ZWwOlvqWsFE53"]}
-// })
+db.conversations.find({
+    _id: ObjectId("635d070b32ced80946fcc283"),
+})
 
 
-db.conversations.find(
-    {_id: ObjectId("635d070b32ced80946fcc283")},{leaderId:1}
-)
+// db.members.find(
+//     {conversationId: ObjectId("635d070b32ced80946fcc283")},{userId:1,_id:0}
+// )
+
 
 // db.messages.updateMany(
 //     {

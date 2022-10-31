@@ -404,6 +404,25 @@ class ConversationService {
 
     async deleteMembers(conversationId, memberId,userId){
 
+        const dataUser = await Conversation.findOne(
+            { _id: conversationId },
+            {members: {
+                $elemMatch: {
+                    userId: userId
+                }
+            }}
+        );
+
+        const dataMember = await Conversation.findOne(
+            { _id: conversationId },
+            {members: {
+                $elemMatch: {
+                    _id: memberId
+                }
+            }}
+        );
+        const {userFistName,userLastName} = data.members[0];
+
         // delete member in conversation
         await Conversation.updateOne(
             { _id: conversationId },
@@ -415,11 +434,11 @@ class ConversationService {
             conversationId,
             userId: memberId,
         });
-
+ 
         // add message
         const newMessage = new Message({
             userId,
-            content: `Đã xóa ${memberId} khỏi nhóm`,
+            content: `${userFistName+""+userLastName} Đã xóa ${dataMember.members[0].userFistName+""+dataMember.members[0].userLastName} khỏi nhóm`,
             type: 'NOTIFY',
             conversationId,
         })
@@ -451,11 +470,27 @@ class ConversationService {
     }
 
     async leaveGroup(conversationId,userId){
+        
+        const data = await Conversation.findOne(
+            { _id: conversationId },
+            {members: {
+                $elemMatch: {
+                    userId: userId
+                }
+            }}
+        );
+        const {userFistName,userLastName} = data.members[0];
+
+
+        
         // delete member in conversation
         await Conversation.updateOne(
             { _id: conversationId },
             { $pull: { members: { userId } } }
         );
+
+        const{leaderId} = await Conversation.findOne({_id:conversationId});
+        console.log(leaderId,userId);
 
         // delete member in member
         await Member.deleteOne({
@@ -466,7 +501,7 @@ class ConversationService {
         // add message
         const newMessage = new Message({
             userId,
-            content: `${userId} Đã rời khỏi nhóm`,
+            content: `${userFistName+""+userLastName} Đã rời khỏi nhóm`,
             type: 'NOTIFY',
             conversationId,
         })
@@ -478,6 +513,15 @@ class ConversationService {
             { _id: conversationId },
             { lastMessageId: _id }
         );
+
+        if(userId===leaderId){
+            const newLeader = await Member.findOne({conversationId},{userId:1,_id:0}).limit(1);
+            console.log(newLeader);
+            await Conversation.updateOne(
+                { _id: conversationId },
+                { leaderId: newLeader.userId }
+            );
+        }
 
         return true;
 
@@ -494,12 +538,14 @@ class ConversationService {
             conversationId,
         });
 
+        // delete message
+        await Message.deleteMany({
+            conversationId,
+        });
+
         return true;
 
-
     }
-
-
 
 
 }

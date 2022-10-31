@@ -11,6 +11,7 @@ class ConversationController {
         this.io = io;
         this.createIndividualConversation =
         this.createIndividualConversation.bind(this);
+        this.createGroupConversation = this.createGroupConversation.bind(this);
     }
 
     // [GET] /:id
@@ -182,6 +183,9 @@ class ConversationController {
                 avatar,
                 userInRoom
             );
+
+            this.io.to(rs).emit('create-conversation',rs)
+
             res.status(201).json(rs);
         }catch (err) {
             next(err);
