@@ -195,9 +195,12 @@ const socket = (io) => {
       socket.broadcast.to(idConversation).emit("stop-typing");
     });
 
-    socket.on("create-conversation", (idConversation) => {
-      console.log(idConversation)
-      io.to(idConversation+"").emit("get-conversation-group",idConversation);
+    socket.on("create-conversation", ({idConversation,idList}) => {
+      const userIdsTempt = [socket.userId, ...idList];
+      userIdsTempt.forEach((userIdEle) =>{
+        io.to(userIdEle).emit("get-conversation-group",idConversation);
+      });
+      
     });
 
      
