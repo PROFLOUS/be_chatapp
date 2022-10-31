@@ -156,13 +156,12 @@ const socket = (io) => {
       io.to(idCon).emit("reMessage",idMessage);
     })
 
-    
+
 
     socket.on("leave-room", (idConversation) => {
       socket.leave(idConversation);
       console.log("leaveRoom"+idConversation);
     })
-
     
 
     socket.on("seen-message",async ({conversationId,userId}) => {
@@ -172,7 +171,6 @@ const socket = (io) => {
       // const listConSender = await conversationService.getAllConversation(userId);
       // io.to(conversationId).emit("get-last",listConSender.data);
       io.to(conversationId).emit("get-last");
-
     })
 
 
@@ -190,6 +188,7 @@ const socket = (io) => {
 
     socket.on("typing", (idConversation) => {
       socket.broadcast.to(idConversation).emit("typing");
+
     });
 
     socket.on("stop-typing", (idConversation) => {

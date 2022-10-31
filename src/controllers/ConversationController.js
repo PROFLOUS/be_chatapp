@@ -142,7 +142,7 @@ class ConversationController {
 
 
     async createGroupConversation(req, res, next) {
-        const {userId,name='',userList=[]} = req.body;
+        const {userId,name='',userList=[],avatar} = req.body;
         const conversationService = new ConversationService();
 
         const userSeltFb = await redisDb.client.get(''+userId).then((data)=>{
@@ -179,6 +179,7 @@ class ConversationController {
             const rs=  await conversationService.createGroupConversation(
                 userSelt,
                 name,
+                avatar,
                 userInRoom
             );
             res.status(201).json(rs);

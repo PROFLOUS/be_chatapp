@@ -50,7 +50,6 @@ class ConversationService {
         let groupAvatar = [];
         let userInfo;
         let leaderId;
-
         if (!name || !avatar) {
             const nameAndAvataresOfGroup =
                 await Conversation.findOne({ _id },{_id:0,
@@ -68,6 +67,17 @@ class ConversationService {
                 groupName += `, ${nameTempt}`;
                 groupAvatar.push({ avaUser });
             }
+        }else{
+            const nameAndAvataresOfGroup =
+                await Conversation.findOne({ _id },{_id:0,
+                    members: {
+                        userFistName: 1,
+                        userLastName:1,
+                        avaUser:1,
+                        userId:1,
+                },}).distinct('members');
+            userInfo = nameAndAvataresOfGroup;
+            groupAvatar.push(avatar);
         }
 
         const result = {
@@ -270,7 +280,7 @@ class ConversationService {
         
     }
 
-    async createGroupConversation(userSelt,name,userInRoom){
+    async createGroupConversation(userSelt,name,avatar,userInRoom){
         
         var uss = userInRoom.map((us) => us.userId);
 
@@ -281,6 +291,7 @@ class ConversationService {
         // add new conversation
         const newConversation = new Conversation({
             name,
+            avatar,
             leaderId: userSelt.userId,
             members: [userSelt,...userInRoom],
             type: true,
