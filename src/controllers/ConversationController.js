@@ -184,7 +184,7 @@ class ConversationController {
                 userInRoom
             );
 
-            this.io.to(rs).emit('create-conversation',rs)
+            // this.io.to(rs).emit('create-conversation',rs)
 
             res.status(201).json(rs);
         }catch (err) {
@@ -239,6 +239,7 @@ class ConversationController {
     async deleteMembers(req, res, next) {
         const {id, memberId} = req.params;
         const {userId} = req.body;
+        console.log(memberId,userId)
 
         const conversationService = new ConversationService();
 

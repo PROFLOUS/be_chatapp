@@ -417,11 +417,11 @@ class ConversationService {
             { _id: conversationId },
             {members: {
                 $elemMatch: {
-                    _id: memberId
+                    userId: memberId
                 }
             }}
         );
-        const {userFistName,userLastName} = data.members[0];
+        const {userFistName,userLastName} = dataUser.members[0];
 
         // delete member in conversation
         await Conversation.updateOne(

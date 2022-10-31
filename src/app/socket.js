@@ -195,6 +195,11 @@ const socket = (io) => {
       socket.broadcast.to(idConversation).emit("stop-typing");
     });
 
+    socket.on("create-conversation", (idConversation) => {
+      console.log(idConversation)
+      io.to(idConversation+"").emit("get-conversation-group",idConversation);
+    });
+
      
   });
 };
