@@ -23,28 +23,6 @@ const handleStart = async (user) => {
     });
   }
   
-  // await redisDb.set(uid, {
-  //   uid,
-  //   first_name,
-  //   last_name,
-  //   avatar,
-  //   isOnline: true,
-  //   lastLogin: null,
-  // });
-  // const cachedUser = await redisDb.get(userId);
-  // console.log(cachedUser);
-  // if (cachedUser){
-  //     await redisDb.set(userId, {
-  //         ...cachedUser,
-  //         isOnline: true,
-  //         lastLogin: null,
-  //     });
-  // }else{
-  //     await redisDb.set(userId, {
-  //         isOnline: true,
-  //         lastLogin: null,
-  //     });
-  // }
 };
 
 const handleEnd = async (userId) => {
@@ -200,7 +178,14 @@ const socket = (io) => {
       userIdsTempt.forEach((userIdEle) =>{
         io.to(userIdEle).emit("get-conversation-group",idConversation);
       });
-      
+    });
+
+    socket.on("kickUser", ({idConversation,idLeader,idUserKick}) => {
+      console.log(idConversation,idLeader,idUserKick);
+      io.to(idUserKick).emit("kickUser-group",idConversation);
+      io.to(idConversation).emit("messNotifi",idConversation);
+      io.to(idConversation).emit("notifi-kickUser",idConversation);
+
     });
 
      

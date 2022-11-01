@@ -37,11 +37,15 @@ class ConversationService {
         
         
         //update numberUnread
-        const member = await Member.findOne({conversationId, userId});
+        if(conversationId){
+            const member = await Member.findOne({conversationId, userId});
+            if(member){
+                const { lastView } = member;
+                const countUnread = await Message.countUnread(lastView, conversationId);
+                await member.updateOne({ $set: { numberUnread: countUnread } });
+            }
         
-        const { lastView } = member;
-        const countUnread = await Message.countUnread(lastView, conversationId);
-        await member.updateOne({ $set: { numberUnread: countUnread } });
+        }
     }
 
     async getInfoGroup(conversation){
