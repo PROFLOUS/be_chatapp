@@ -412,6 +412,7 @@ class ConversationService {
                 }
             }}
         );
+        console.log(dataUser)
 
         const dataMember = await Conversation.findOne(
             { _id: conversationId },
@@ -421,6 +422,9 @@ class ConversationService {
                 }
             }}
         );
+
+        console.log(dataMember)
+
         const {userFistName,userLastName} = dataUser.members[0];
 
         // delete member in conversation

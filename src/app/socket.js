@@ -186,13 +186,13 @@ const socket = (io) => {
       }
     });
 
-    socket.on("typing", (idConversation) => {
-      socket.broadcast.to(idConversation).emit("typing");
+    socket.on("typing", (idConversation,me) => {
+      socket.broadcast.to(idConversation).emit("typing",me);
 
     });
 
-    socket.on("stop-typing", (idConversation) => {
-      socket.broadcast.to(idConversation).emit("stop-typing");
+    socket.on("stop-typing", (idConversation,me) => {
+      socket.broadcast.to(idConversation).emit("stop-typing",me);
     });
 
     socket.on("create-conversation", ({idConversation,idList}) => {
