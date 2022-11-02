@@ -8,8 +8,8 @@ class FriendController {
     this.acceptFriend = this.acceptFriend.bind(this);
     this.sendFriendInvite = this.sendFriendInvite.bind(this);
     this.deleteFriend = this.deleteFriend.bind(this);
-    // this.deleteFriendInvite = this.deleteFriendInvite.bind(this);
-    // this.deleteInviteWasSend = this.deleteInviteWasSend.bind(this);
+    this.deleteFriendInvite = this.deleteFriendInvite.bind(this);
+    //this.deleteInviteWasSend = this.deleteInviteWasSend.bind(this);
   }
 
   // [GET] /list/:userId
@@ -113,10 +113,10 @@ class FriendController {
   // [DELETE] /:userId
   async deleteFriend(req, res) {
     var { id = "" } = req.body;
-    var { friendId = "" } = req.params;
+    var { userId = "" } = req.params;
     try {
-      await friendService.deleteFriend(id, friendId);
-      // this.io.to(friendId).emit('deleteFriend',_id);
+      await friendService.deleteFriend(id, userId);
+      this.io.to(userId).emit("delete-friend", id);
       return res.status(200).json();
     } catch (error) {
       console.log(error);
@@ -126,11 +126,15 @@ class FriendController {
   //[DELETE]  /invites/:userId
   async deleteFriendInvite(req, res, next) {
     var { id } = req.body;
+
+    //user invite
     var { userId } = req.params;
 
     try {
       await friendService.deleteFriendInvite(id, userId);
-      // this.io.to(userId + '').emit('deleted-friend-invite', _id);
+
+      //send idUser delete invite to invite user
+      this.io.to(userId).emit("deleted-invite", id);
 
       res.status(204).json();
     } catch (err) {
@@ -140,15 +144,21 @@ class FriendController {
   }
   // [POST] /invites/me/:userId
   async sendFriendInvite(req, res, next) {
+    //user sender invite
     const { id = "" } = req.body;
     console.log("iduser", id);
+
+    //user receive
     const userId = req.params.userId;
+
+    //infUser sender
     const user = await FirebaseService.getById(id).then((result) => {
       return { ...result, userId: id };
     });
     try {
       await friendService.sendFriendInvite(id, userId);
 
+      //send InfUser sender {firstName,lastName,avatar,id} to user recevice
       this.io.to(userId).emit("send-friend-invite", user);
 
       res.status(201).json();

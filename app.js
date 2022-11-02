@@ -30,7 +30,7 @@ const cred = {
 connectDB();
 
 app.use(bodyParser.json({ limit: "50mb" }));
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(useragent.express());
 app.use(morgan("common"));
 
@@ -69,11 +69,10 @@ routes(app, io);
 
 const port = process.env.PORT;
 
-server.listen(port, () => {
-  console.log("Example app listening on http://localhost:" + port);
-});
+// server.listen(port, () => {
+//   console.log("Example app listening on http://localhost:" + port);
+// });
 
-// serverTest.listen(5005, () => {
-//     console.log('Example app listening on http://localhost:'+5005)
-//     }
-// )
+serverTest.listen(5005, () => {
+  console.log("Example app listening on http://localhost:" + 5005);
+});
