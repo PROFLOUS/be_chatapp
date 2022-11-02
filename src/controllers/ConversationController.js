@@ -12,6 +12,8 @@ class ConversationController {
         this.createIndividualConversation =
         this.createIndividualConversation.bind(this);
         this.createGroupConversation = this.createGroupConversation.bind(this);
+        this.leaveGroup = this.leaveGroup.bind(this);
+
     }
 
     // [GET] /:id

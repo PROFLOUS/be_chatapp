@@ -61,9 +61,10 @@ messageSchema.statics.getListByConversationIdAndUserId = async (
       $match: {
           conversationId: ObjectId(conversationId),
           deletedUserIds: {
-            $nin: [userId],
-        },
+              $nin: [userId],
+          },
       },
+      
   },
   {
       $lookup: {
@@ -74,11 +75,11 @@ messageSchema.statics.getListByConversationIdAndUserId = async (
       },
   },
   {
-    $skip: skip,
- },
- {
-     $limit: limit,
- },
+     $skip: skip,
+  },
+  {
+      $limit: limit,
+  },
   {
       $group:{
           _id: "$conversationId",
@@ -88,8 +89,8 @@ messageSchema.statics.getListByConversationIdAndUserId = async (
                   userId: "$userId",
                   content: "$content",
                   createdAt: "$createdAt",
-                  deletedByUserIds: "$deletedByUserIds",
                   isDeleted: "$isDeleted",
+                  deletedByUserIds: "$deletedByUserIds",
                   reacts:"$reacts",
                   replyMessageId: "$replyMessage",
                   createdAt: "$createdAt",
@@ -97,12 +98,13 @@ messageSchema.statics.getListByConversationIdAndUserId = async (
               },
           },
       },
-  },{
+  }
+  ,{
       $project: {
           _id: 0,
           messages: 1,
       },
-  }
+  },
   ]);
   return messages;
 };

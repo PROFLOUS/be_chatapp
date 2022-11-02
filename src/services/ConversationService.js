@@ -146,6 +146,8 @@ class ConversationService {
         try {
             let messages = await Message.getListByConversationIdAndUserId(conversationId,userId,skip,limit);
             
+            console.log(messages);
+
             //update lastView
             await Member.updateOne(
                 { conversationId, userId },
@@ -470,14 +472,17 @@ class ConversationService {
     }
 
     async deleteAllMessage(conversationId,userId){
-        await Message.updateMany(
-            { conversationId, deletedUserIds: { $nin: [userId] } },
-            { $push: { deletedUserIds: userId } }
+        const rs = await Message.updateMany(
+            {
+            conversationId:ObjectId(conversationId),deletedByUserIds:{ $nin: [userId]  }
+           },
+           { $push: { deletedByUserIds: userId } }
         );
-        return true;
+        return rs;
     }
 
     async leaveGroup(conversationId,userId){
+        console.log(conversationId,userId)
         
         const data = await Conversation.findOne(
             { _id: conversationId },
@@ -487,6 +492,8 @@ class ConversationService {
                 }
             }}
         );
+
+        console.log(data)
         const {userFistName,userLastName} = data.members[0];
 
 

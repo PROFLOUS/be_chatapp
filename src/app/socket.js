@@ -185,7 +185,6 @@ const socket = (io) => {
       io.to(idUserKick).emit("kickUser-group",idConversation);
       io.to(idConversation).emit("messNotifi",idConversation);
       io.to(idConversation).emit("notifi-kickUser",idConversation);
-
     });
 
      
