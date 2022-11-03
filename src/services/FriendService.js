@@ -72,7 +72,7 @@ const FriendService = {
     //     throw new MyError('Friend exists');
 
     // delete xoa loi moi
-    // await FriendRequest.deleteOne({ senderId, receiverId: _id });
+    await FriendReq.deleteByIds(sender.userId, user.userId);
 
     // add friend
     const friend = new Friend({
@@ -153,25 +153,31 @@ const FriendService = {
     ]);
 
     const listInviteResult = [];
+    var invite = null;
     for (const listInvite of listInviteId) {
       var inviteId = listInvite.senderId;
-      const array = await FirebaseService.getById(_id).then((result) => {
-        return result.data();
-      });
+      const array = await FirebaseService.getById(listInvite.senderId).then(
+        (result) => {
+          return { ...result };
+        }
+      );
+      console.log("user", array);
+
       console.log("usreFirebase", array);
       // var numCommonGroup =0;
       //var numGroup = await MeService.getNumberCommonGroup(_id,inId)
-      const invite = {
+      invite = {
         //  inviteId.senderId,
         inviteId,
+        ...array,
         numCommonGroup: await MeService.getNumberCommonGroup(_id, inviteId),
 
         numCommonFriend: await MeService.getNumberCommonFriend(
           _id,
           listInvite.senderId
         ),
-        ...array,
       };
+
       listInviteResult.push(invite);
       console.log("senderID" + listInvite.senderId);
     }

@@ -18,8 +18,6 @@ const MessageService = {
 
     const saveMessage = await newMessage.save();
 
-    
-
     // cap nhat conversation khi co tin nhan moi
     return MessageService.updateWhenHasNewMessage(
       saveMessage,

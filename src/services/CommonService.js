@@ -29,6 +29,9 @@ const MeService = {
         numCommon = 0;
       } else {
         numCommon = numOfGroup.numCommonGroup;
+        if (numCommon != 0) {
+          return (numCommon = numOfGroup.numCommonGroup - 1);
+        }
       }
     }
     console.log("numOfGroup", num.length);

@@ -13,7 +13,7 @@ const memberSchema = new Schema({
   },
   numberUnread: {
     type: Number,
-    default: 0
+    default: 0,
   },
   userId: {
     type: String,

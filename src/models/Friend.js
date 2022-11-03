@@ -20,7 +20,7 @@ const friendSchema = new Schema({
       },
       avaUser: {
         type: String,
-        required: true,
+        //required: true,
       },
     },
   ],
