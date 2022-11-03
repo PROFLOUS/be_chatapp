@@ -353,7 +353,7 @@ class ConversationService {
 
         await newMessage.save();
 
-        return { conversationId: _id, isExists , message: saveMessage};
+        return { conversationId: _id, isExists , message: newMessage};
     }
 
     async getMembers(conversationId){
