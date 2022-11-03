@@ -157,7 +157,7 @@ class FriendController {
     });
     try {
       await friendService.sendFriendInvite(id, userId);
-
+      ///them cai coi
       //send InfUser sender {firstName,lastName,avatar,id} to user recevice
       this.io.to(userId).emit("send-friend-invite", user);
 
