@@ -281,7 +281,7 @@ class ConversationService {
 
         return _id;
         }else{
-            return {id:check}
+            return {_id:check}
         }
         
     }
@@ -345,12 +345,13 @@ class ConversationService {
 
         // tao loi chao mung
         const newMessage = new Message({
+            userId:user.userId,
             content: 'Đã là bạn bè',
             type: 'NOTIFY',
             conversationId: _id,
         });
 
-        const saveMessage = await messageService.addText(newMessage, user.userId);
+        await newMessage.save();
 
         return { conversationId: _id, isExists , message: saveMessage};
     }
