@@ -1,56 +1,51 @@
-const ConversationController = require("../controllers/ConversationController");
-const router = require("express").Router();
 
-const conversationRouter = (io) => {
-  const conversationController = new ConversationController(io);
-  // get the conversationId
-  router.get("/:id", conversationController.getOne);
-  // get all conversation of user
+const ConversationController = require('../controllers/ConversationController');
+const router = require('express').Router();
 
-  router.get("/user/:userId", conversationController.getAll);
+const conversationRouter =(io)=>{
+    const conversationController = new ConversationController(io);
+    // get the conversationId
+    router.get('/:id', conversationController.getOne);
+    // get all conversation of user
 
-  // check conversation of user and friend
+    router.get('/user/:userId', conversationController.getAll);
 
-  //  router.get('/user/:userId/friend/:friendId', conversationController.checkConversation);
-  router.get("/", conversationController.checkConversation);
+     // check conversation of user and friend
 
-  // create a new conversation individual
-  router.post(
-    "/individuals/:userId",
-    conversationController.createIndividualConversation
-  );
-  // create a new group conversation
-  router.post("/groups", conversationController.createGroupConversation);
+    //  router.get('/user/:userId/friend/:friendId', conversationController.checkConversation);
+     router.get('/', conversationController.checkConversation);
 
-  // create a new conversation individual
-  router.post(
-    "/individuals/:userId",
-    conversationController.createIndividualConversation
-  );
+    // create a new conversation individual
+    router.post('/individuals/:userId',conversationController.createIndividualConversation);
+    
+    // delete a conversation
+    router.delete('/:id/messages', conversationController.deleteAllMessage);
+    
+    // create a new group conversation
+    router.post('/groups',conversationController.createGroupConversation);
 
-  // delete a conversation
-  router.delete("/:id/messages", conversationController.deleteAllMessage);
+    // get list members
+    router.get('/members/:id',conversationController.getMembers);
 
-  // create a new group conversation
-  router.post("/groups", conversationController.createGroupConversation);
+    // add members
+    router.post('/members/:id',conversationController.addMembers);
+    
+    // delete members
+    router.delete('/members/:id/:memberId',conversationController.deleteMembers);
 
-  // add members
-  router.post("/members/:id", conversationController.addMembers);
+    // leave group
+    router.delete('/leave/:id',conversationController.leaveGroup);
 
-  // delete members
-  router.delete("/members/:id/:memberId", conversationController.deleteMembers);
+    // delete group
+    router.delete('/groups/:id',conversationController.deleteGroup);
 
-  // leave group
-  router.delete("/leave/:id", conversationController.leaveGroup);
+    router.get('/test',(req, res) => {
+        res.json({message: 'test'});
+    });
 
-  // delete group
-  router.delete("/groups/:id", conversationController.deleteGroup);
 
-  router.get("/test", (req, res) => {
-    res.json({ message: "test" });
-  });
-
-  return router;
-};
+    
+    return router;
+}
 
 module.exports = conversationRouter;
