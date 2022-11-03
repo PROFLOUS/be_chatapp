@@ -6,59 +6,59 @@ use('test');
 
 
 
-db.messages.aggregate([
-        {
-            $match: {
-                conversationId: ObjectId("635ffb510632e8cde3c697ab"),
-                deletedUserIds: {
-                    $nin: ["HiIaKOEh8qTzOfTF1Va0Z6z61Qz2"],
-                },
-            },
+// db.messages.aggregate([
+//         {
+//             $match: {
+//                 conversationId: ObjectId("635ffb510632e8cde3c697ab"),
+//                 deletedUserIds: {
+//                     $nin: ["HiIaKOEh8qTzOfTF1Va0Z6z61Qz2"],
+//                 },
+//             },
             
-        },
-        {
-            $lookup: {
-                from: 'messages',
-                localField: 'replyMessageId',
-                foreignField: '_id',
-                as: 'replyMessage',
-            },
-        },
-        {
-           $skip: 0,
-        },
-        {
-            $limit: 200,
-        },
-        {
-            $group:{
-                _id: "$conversationId",
-                messages: {
-                    $push: {
-                        _id: "$_id",
-                        userId: "$userId",
-                        content: "$content",
-                        createdAt: "$createdAt",
-                        isDeleted: "$isDeleted",
-                        deletedByUserIds: "$deletedByUserIds",
-                        reacts:"$reacts",
-                        replyMessageId: "$replyMessage",
-                        createdAt: "$createdAt",
-                        type: "$type",
-                    },
-                },
-            },
-        }
-        ,{
-            $project: {
-                _id: 0,
-                messages: 1,
-            },
-        },
-    ]);
+//         },
+//         {
+//             $lookup: {
+//                 from: 'messages',
+//                 localField: 'replyMessageId',
+//                 foreignField: '_id',
+//                 as: 'replyMessage',
+//             },
+//         },
+//         {
+//            $skip: 0,
+//         },
+//         {
+//             $limit: 200,
+//         },
+//         {
+//             $group:{
+//                 _id: "$conversationId",
+//                 messages: {
+//                     $push: {
+//                         _id: "$_id",
+//                         userId: "$userId",
+//                         content: "$content",
+//                         createdAt: "$createdAt",
+//                         isDeleted: "$isDeleted",
+//                         deletedByUserIds: "$deletedByUserIds",
+//                         reacts:"$reacts",
+//                         replyMessageId: "$replyMessage",
+//                         createdAt: "$createdAt",
+//                         type: "$type",
+//                     },
+//                 },
+//             },
+//         }
+//         ,{
+//             $project: {
+//                 _id: 0,
+//                 messages: 1,
+//             },
+//         },
+//     ]);
 
-// db.conversations.find({
-//     _id: ObjectId("635ffb510632e8cde3c697ab")
+// db.members.find({
+//     conversationId: ObjectId("63623abf8e4905bb1226a2c7")
 // })
 
 // db.conversations.aggregate([
