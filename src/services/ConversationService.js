@@ -254,6 +254,7 @@ class ConversationService {
         
         const check = await this.checkConversation(user1.userId,user2.userId)
         if(!check){
+        console.log("createIndividualConversation");
             // add new conversation
         const newConversation = new Conversation({
             // name: user2.userLastName,
@@ -281,7 +282,9 @@ class ConversationService {
 
         return _id;
         }else{
-            return {_id:check}
+        console.log("IndividualConversation is exists");
+
+            return {check}
         }
         
     }
@@ -352,6 +355,12 @@ class ConversationService {
         });
 
         await newMessage.save();
+
+        const mesId= newMessage._id;
+        await Conversation.updateOne(
+            { _id },
+            { lastMessageId: mesId }
+        );
 
         return { conversationId: _id, isExists , message: newMessage};
     }
@@ -493,11 +502,8 @@ class ConversationService {
                 }
             }}
         );
-
         console.log(data)
         const {userFistName,userLastName} = data.members[0];
-
-
         
         // delete member in conversation
         await Conversation.updateOne(
@@ -505,6 +511,15 @@ class ConversationService {
             { $pull: { members: { userId } } }
         );
 
+        // count member in conversation
+        const countMember = await Member.countDocuments({
+            conversationId,
+        });
+        console.log(countMember)
+        if(countMember === 0){
+            await ConversationService.deleteGroup(conversationId);
+            return true;
+        }
         const{leaderId} = await Conversation.findOne({_id:conversationId});
         console.log(leaderId,userId);
 

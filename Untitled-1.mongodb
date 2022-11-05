@@ -182,9 +182,9 @@ use('test');
     
 // ])
 
-// db.conversations.countDocuments({
-//     "members.userId":{$in:[ObjectId("63181c892499351136c9da51")]}
-// })
+db.members.countDocuments({
+    "conversationId":ObjectId("636162298e4905bb122625e7")
+})
 
 // db.members.aggregate([
 //     {

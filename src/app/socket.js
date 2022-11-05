@@ -204,11 +204,19 @@ const socket = (io) => {
     });
 
     socket.on("kickUser", ({idConversation,idLeader,idUserKick}) => {
-      console.log(idConversation,idLeader,idUserKick);
+      
       io.to(idUserKick).emit("kickUser-group",idConversation);
       io.to(idConversation).emit("messNotifi",idConversation);
       io.to(idConversation).emit("notifi-kickUser",idConversation);
     });
+
+    socket.on("accept-friend", ({ idUser, idFriend }) => {
+      console.log(idUser,idFriend);
+      io.to(idUser).emit("updateListFrien", idFriend);
+      io.to(idFriend).emit("updateListInvite", idUser);
+    });
+
+
   });
 };
 
