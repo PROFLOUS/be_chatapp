@@ -284,7 +284,7 @@ class ConversationService {
         }else{
         console.log("IndividualConversation is exists");
 
-            return {check}
+            return {_id:check}
         }
         
     }
