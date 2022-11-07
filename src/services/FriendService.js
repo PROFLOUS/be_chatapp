@@ -197,6 +197,22 @@ const FriendService = {
     }
     return listInviteResult;
   },
+
+  checkStatus: async (userId, friendId) => {
+    const friend = await Friend.existsByIds(userId, friendId);
+    const friendReq = await FriendReq.existsByIds(userId, friendId);
+
+    console.log(friendReq, friend);
+
+    if (friend) return "friend";
+    if (friendReq) return friendReq;
+    return "none";
+
+    // return { friend, friendReq };
+  }
+
+
+
 };
 
 module.exports = FriendService;

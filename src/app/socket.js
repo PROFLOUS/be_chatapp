@@ -216,6 +216,14 @@ const socket = (io) => {
       io.to(idFriend).emit("updateListInvite", idUser);
     });
 
+    socket.on("send-req", ({ idUser, idFriend,idCon }) => {
+      if(idCon){
+        io.to(idCon).emit("get-req", {idUser,idFriend});
+      }
+      // io.to(idUser).emit("updateListFrien", idFriend);
+      // io.to(idFriend).emit("updateListInvite", idUser);
+    });
+
 
   });
 };

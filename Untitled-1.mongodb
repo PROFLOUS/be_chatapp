@@ -214,15 +214,15 @@ use('test');
 //     }
 // ])
 
-db.conversations.find(
-    {
-        "members.userId":{$all:["dP2GR6FMv1fJG40SK9CXeZlbLCo2","HiIaKOEh8qTzOfTF1Va0Z6z61Qz2"]},
-        "type":false,
-    },
-    {
-        _id:1
-    }
-)
+// db.conversations.find(
+//     {
+//         "members.userId":{$all:["dP2GR6FMv1fJG40SK9CXeZlbLCo2","HiIaKOEh8qTzOfTF1Va0Z6z61Qz2"]},
+//         "type":false,
+//     },
+//     {
+//         _id:1
+//     }
+// )
 
 
 // db.conversations.aggregate([
@@ -240,6 +240,25 @@ db.conversations.find(
 //         },
 //     },
 // ])
+
+// db.friends.find(
+//     {
+//         "user.userId": { $all: ["HiIaKOEh8qTzOfTF1Va0Z6z61Qz2", "dP2GR6FMv1fJG40SK9CXeZlbLCo2"] },
+//     }
+// )
+db.friendrequests.find({
+     $or: [
+        {
+            "senderId": "dP2GR6FMv1fJG40SK9CXeZlbLCo2",
+            "receiverId": "HiIaKOEh8qTzOfTF1Va0Z6z61Qz2",
+        },
+        {
+            "senderId": "HiIaKOEh8qTzOfTF1Va0Z6z61Qz2",
+            "receiverId": "dP2GR6FMv1fJG40SK9CXeZlbLCo2",
+        },
+    ]
+})
+
 // db.conversations.deleteMany({})
 // db.friendrequests.deleteMany({})
 // db.friends.deleteMany({})

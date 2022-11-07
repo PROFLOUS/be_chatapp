@@ -21,6 +21,7 @@ const friendRouter = (io) => {
   router.post("/invites/me/:userId", friendController.sendFriendInvite);
   // // list friends offer
   // router.get('/suggest', friendController.getSuggestFriends);
+  router.get("/check",friendController.checkStatus);
 
   return router;
 };

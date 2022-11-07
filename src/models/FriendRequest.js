@@ -13,11 +13,19 @@ const friendReqSchema = new Schema(
 
 friendReqSchema.statics.existsByIds = async (senderId, receiverId) => {
   const isExists = await FriendRequest.findOne({
-    senderId,
-    receiverId,
+    $or: [
+      {
+          "senderId": senderId,
+          "receiverId": receiverId,
+      },
+      {
+          "senderId": receiverId,
+          "receiverId": senderId,
+      },
+  ]
   });
 
-  if (isExists) return true;
+  if (isExists) return { senderId: isExists.senderId, receiverId:isExists.receiverId};
 
   return false;
 };

@@ -178,6 +178,16 @@ class FriendController {
       next(error);
     }
   }
+
+  async checkStatus(req,res,next){
+    const {userId,friendId} = req.query;
+    try {
+      const friendInvite = await friendService.checkStatus(userId,friendId);
+      res.json(friendInvite);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = FriendController;
