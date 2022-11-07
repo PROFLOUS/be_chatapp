@@ -224,6 +224,16 @@ const socket = (io) => {
       // io.to(idFriend).emit("updateListInvite", idUser);
     });
 
+    socket.on("cancle-request-friend", ({ idUser, idFriend,idCon }) => {
+      if(idCon){
+        io.to(idCon).emit("update-status", {idUser,idFriend});
+      }
+      // io.to(idUser).emit("updateListFrien", idFriend);
+      // io.to(idFriend).emit("updateListInvite", idUser);
+    });
+
+
+
 
   });
 };
