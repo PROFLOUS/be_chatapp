@@ -182,9 +182,11 @@ use('test');
     
 // ])
 
-db.members.countDocuments({
-    "conversationId":ObjectId("636162298e4905bb122625e7")
-})
+// db.members.countDocuments({
+//     "conversationId":ObjectId("636162298e4905bb122625e7")
+// })
+
+
 
 // db.members.aggregate([
 //     {
@@ -202,6 +204,26 @@ db.members.countDocuments({
 //         }
 //     }
 // ]);
+
+// db.conversations.aggregate([
+//     {
+//         $match: {
+//             "members.userId":{$all:["dP2GR6FMv1fJG40SK9CXeZlbLCo2","HiIaKOEh8qTzOfTF1Va0Z6z61Qz2"]},
+//             "type":false
+//         }
+//     }
+// ])
+
+db.conversations.find(
+    {
+        "members.userId":{$all:["dP2GR6FMv1fJG40SK9CXeZlbLCo2","HiIaKOEh8qTzOfTF1Va0Z6z61Qz2"]},
+        "type":false,
+    },
+    {
+        _id:1
+    }
+)
+
 
 // db.conversations.aggregate([
 //     {

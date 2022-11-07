@@ -152,6 +152,8 @@ const FriendService = {
       { $project: { _id: 0, senderId: 1 } },
     ]);
 
+    
+
     const listInviteResult = [];
     var invite = null;
     for (const listInvite of listInviteId) {
@@ -161,9 +163,18 @@ const FriendService = {
           return { ...result };
         }
       );
-      console.log("user", array);
 
-      console.log("usreFirebase", array);
+      const idConver = await Conversation.findOne(
+        {
+          "members.userId":{$all:[_id,inviteId]},
+          "type":false,
+        },
+        {
+          _id: 1,
+        }
+      )
+      console.log("idd", idConver);
+      console.log("usreFirebase", _id,inviteId);
       // var numCommonGroup =0;
       //var numGroup = await MeService.getNumberCommonGroup(_id,inId)
       invite = {
@@ -176,7 +187,10 @@ const FriendService = {
           _id,
           listInvite.senderId
         ),
+        idConver: idConver
       };
+
+
 
       listInviteResult.push(invite);
       console.log("senderID" + listInvite.senderId);

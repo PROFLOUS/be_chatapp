@@ -518,41 +518,40 @@ class ConversationService {
         console.log(countMember)
         if(countMember === 0){
             await ConversationService.deleteGroup(conversationId);
-            return true;
-        }
-        const{leaderId} = await Conversation.findOne({_id:conversationId});
-        console.log(leaderId,userId);
+        }else{
+            const{leaderId} = await Conversation.findOne({_id:conversationId});
+            // delete member in member
+            await Member.deleteOne({
+                conversationId,
+                userId,
+            });
 
-        // delete member in member
-        await Member.deleteOne({
-            conversationId,
-            userId,
-        });
+            // add message
+            const newMessage = new Message({
+                userId,
+                content: `${userFistName+""+userLastName} Đã rời khỏi nhóm`,
+                type: 'NOTIFY',
+                conversationId,
+            })
+            await newMessage.save();
 
-        // add message
-        const newMessage = new Message({
-            userId,
-            content: `${userFistName+""+userLastName} Đã rời khỏi nhóm`,
-            type: 'NOTIFY',
-            conversationId,
-        })
-        await newMessage.save();
-
-        // update last message
-        const{_id,createdAt} = newMessage;
-        await Conversation.updateOne(
-            { _id: conversationId },
-            { lastMessageId: _id }
-        );
-
-        if(userId===leaderId){
-            const newLeader = await Member.findOne({conversationId},{userId:1,_id:0}).limit(1);
-            console.log(newLeader);
+            // update last message
+            const{_id,createdAt} = newMessage;
             await Conversation.updateOne(
                 { _id: conversationId },
-                { leaderId: newLeader.userId }
+                { lastMessageId: _id }
             );
+
+            if(userId===leaderId){
+                const newLeader = await Member.findOne({conversationId},{userId:1,_id:0}).limit(1);
+                console.log(newLeader);
+                await Conversation.updateOne(
+                    { _id: conversationId },
+                    { leaderId: newLeader.userId }
+                );
+            }
         }
+        
 
         return true;
 
