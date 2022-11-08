@@ -13,6 +13,11 @@ const friendRouter = (io) => {
   router.delete("/:userId", friendController.deleteFriend);
   // // list invites to me
   router.get("/invites/:userId", friendController.getListFriendInvites);
+  ///list was send invites
+  router.get(
+    "/invites/wassend/:userId",
+    friendController.getListWasSendInvites
+  );
   // //delete invite
   router.delete("/invites/:userId", friendController.deleteFriendInvite);
   // // list invites from me

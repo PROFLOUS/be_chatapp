@@ -176,6 +176,17 @@ class FriendController {
       next(error);
     }
   }
+  // list was send invite
+  async getListWasSendInvites(req, res, next) {
+    //userid send
+    const { userId } = req.params;
+    try {
+      const friendInvite = await friendService.getListWasSendInvite(userId);
+      res.json(friendInvite);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = FriendController;

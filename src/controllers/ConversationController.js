@@ -23,17 +23,38 @@ class ConversationController {
     // var size=20;
     const { page, size } = req.query;
 
-    try {
-      const conversationService = new ConversationService();
-      const conversation = await conversationService.getConversationById(
-        id,
-        userId,
-        parseInt(page),
-        parseInt(size)
-      );
-      res.json(conversation);
-    } catch (err) {
-      next(err);
+    let total = 0;
+    const totalMessages = await Message.countDocumentsByConversationIdAndUserId(
+      id
+    );
+    console.log("totalMessages", totalMessages);
+    if (!page) {
+      total = Math.ceil(totalMessages / size) - 1;
+      try {
+        const conversationService = new ConversationService();
+        const conversation = await conversationService.getConversationById(
+          id,
+          userId,
+          parseInt(total),
+          parseInt(size)
+        );
+        res.json(conversation);
+      } catch (err) {
+        next(err);
+      }
+    } else {
+      try {
+        const conversationService = new ConversationService();
+        const conversation = await conversationService.getConversationById(
+          id,
+          userId,
+          parseInt(page),
+          parseInt(size)
+        );
+        res.json(conversation);
+      } catch (err) {
+        next(err);
+      }
     }
   }
 

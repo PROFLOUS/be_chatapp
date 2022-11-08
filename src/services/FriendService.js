@@ -183,6 +183,45 @@ const FriendService = {
     }
     return listInviteResult;
   },
+  getListWasSendInvite: async (_id) => {
+    const listSendInviteId = await FriendReq.aggregate([
+      {
+        $match: { senderId: _id },
+      },
+      { $project: { _id: 0, receiverId: 1 } },
+    ]);
+
+    const listInviteResult = [];
+    var invite = null;
+    for (const listWasSendInvite of listSendInviteId) {
+      var inviteId = listWasSendInvite.receiverId;
+      const array = await FirebaseService.getById(
+        listWasSendInvite.receiverId
+      ).then((result) => {
+        return { ...result };
+      });
+      console.log("user", array);
+
+      console.log("usreFirebase", array);
+      // var numCommonGroup =0;
+      //var numGroup = await MeService.getNumberCommonGroup(_id,inId)
+      invite = {
+        //  inviteId.senderId,
+        inviteId,
+        ...array,
+        numCommonGroup: await MeService.getNumberCommonGroup(_id, inviteId),
+
+        numCommonFriend: await MeService.getNumberCommonFriend(
+          _id,
+          listWasSendInvite.receiverId
+        ),
+      };
+
+      listInviteResult.push(invite);
+      console.log("senderID" + listWasSendInvite.receiverId);
+    }
+    return listInviteResult;
+  },
 };
 
 module.exports = FriendService;
