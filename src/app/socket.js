@@ -210,28 +210,37 @@ const socket = (io) => {
       io.to(idConversation).emit("notifi-kickUser",idConversation);
     });
 
-    socket.on("accept-friend", ({ idUser, idFriend }) => {
-      console.log(idUser,idFriend);
-      io.to(idUser).emit("updateListFrien", idFriend);
-      io.to(idFriend).emit("updateListInvite", idUser);
-    });
+    // socket.on("accept-friend", ({ idUser, idFriend }) => {
+    //   console.log(idUser,idFriend);
+    //   io.to(idUser).emit("updateListFrien", idFriend);
+    //   io.to(idFriend).emit("updateListInvite", idUser);
+    // });
 
-    socket.on("send-req", ({ idUser, idFriend,idCon }) => {
-      if(idCon){
-        io.to(idCon).emit("get-req", {idUser,idFriend});
-      }
-      // io.to(idUser).emit("updateListFrien", idFriend);
-      // io.to(idFriend).emit("updateListInvite", idUser);
-    });
+    // socket.on("send-req", ({ idUser, idFriend,idCon }) => {
+    //   if(idCon){
+    //     io.to(idCon).emit("get-req", {idUser,idFriend});
+    //   }
+    //   // io.to(idUser).emit("updateListFrien", idFriend);
+    //   // io.to(idFriend).emit("updateListInvite", idUser);
+    // });
 
-    socket.on("cancle-request-friend", ({ idUser, idFriend,idCon }) => {
+    socket.on("handle-request-friend", ({ idUser, idFriend,idCon }) => {
       if(idCon){
         io.to(idCon).emit("update-status", {idUser,idFriend});
       }
-      // io.to(idUser).emit("updateListFrien", idFriend);
+      io.to(idFriend).emit("update-invite", idUser);
+      io.to(idUser).emit("update-inviteFr", idFriend);
       // io.to(idFriend).emit("updateListInvite", idUser);
     });
 
+    // socket.on("send-request-friend", ({ idUser, idFriend,idCon }) => {
+    //   if(idCon){
+    //     io.to(idCon).emit("update-status", {idUser,idFriend});
+    //   }
+    //   io.to(idFriend).emit("update-invite", idUser);
+    //   io.to(idUser).emit("update-inviteFr", idFriend);
+    //   // io.to(idFriend).emit("updateListInvite", idUser);
+    // });
 
 
 
