@@ -224,9 +224,13 @@ const socket = (io) => {
     //   // io.to(idFriend).emit("updateListInvite", idUser);
     // });
 
-    socket.on("handle-request-friend", ({ idUser, idFriend,idCon }) => {
+    socket.on("handle-request-friend", ({ idUser, idFriend,idCon,mess }) => {
       if(idCon){
+        
         io.to(idCon).emit("update-status", {idUser,idFriend});
+      }
+      if(mess){
+        io.to(idCon).emit("get-message", {mess});
       }
       io.to(idFriend).emit("update-invite", idUser);
       io.to(idUser).emit("update-inviteFr", idFriend);

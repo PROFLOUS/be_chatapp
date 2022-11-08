@@ -103,7 +103,7 @@ class FriendController {
         .to(id)
         .to(conversationId)
         .emit(" create-conversation-was-friend", conversationId, message);
-      this.io.to(conversationId).emit("get-message", {message});
+      // this.io.to(conversationId).emit("get-message", {message});
 
       res.status(201).json(result);
     } catch (e) {
