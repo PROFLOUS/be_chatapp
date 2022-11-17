@@ -57,7 +57,6 @@ socket(io);
 app.use(handleErr);
 
 routes(app, io);
-
 // rd.set("Ix7UVDUIrmRYOB6uGFc715drn2H4", {
 //     uid:"Ix7UVDUIrmRYOB6uGFc715drn2H4",
 //     first_name:"Cuong",
