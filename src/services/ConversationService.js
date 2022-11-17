@@ -517,7 +517,7 @@ class ConversationService {
         });
         console.log(countMember)
         if(countMember === 0){
-            await ConversationService.deleteGroup(conversationId);
+            return await ConversationService.deleteGroup(conversationId);
         }else{
             const{leaderId} = await Conversation.findOne({_id:conversationId});
             // delete member in member

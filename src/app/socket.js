@@ -119,27 +119,32 @@ const socket = (io) => {
             .emit("get-notifiGr", { message, name, avatar, nameGroup });
         } else {
           socket.receiverId = receiverId;
-          const conversationService = new ConversationService();
 
-          const listConSender = conversationService
-            .getAllConversation(senderId)
-            .then((data) => {
-              return data.data;
-            });
-          const listConReceiver = conversationService
-            .getAllConversation(receiverId)
-            .then((data) => {
-              return data.data;
-            });
+          io.to(receiverId).emit("get-last-msg-r", {receiverId });
+          io.to(senderId).emit("get-last-msg-s", {senderId });
 
-          Promise.all([listConSender, listConReceiver]).then((data) => {
-            const listConSenders = data[0];
-            const listConReceivers = data[1];
-            io.to(idCon).emit("get-last-message", {
-              listSender: listConSenders,
-              listReceiver: listConReceivers,
-            });
-          });
+
+          // const conversationService = new ConversationService();
+
+          // const listConSender = conversationService
+          //   .getAllConversation(senderId)
+          //   .then((data) => {
+          //     return data.data;
+          //   });
+          // const listConReceiver = conversationService
+          //   .getAllConversation(receiverId)
+          //   .then((data) => {
+          //     return data.data;
+          //   });
+
+          // Promise.all([listConSender, listConReceiver]).then((data) => {
+          //   const listConSenders = data[0];
+          //   const listConReceivers = data[1];
+          //   io.to(idCon).emit("get-last-message", {
+          //     listSender: listConSenders,
+          //     listReceiver: listConReceivers,
+          //   });
+          // });
 
           socket.broadcast
             .to(idCon)
@@ -187,13 +192,15 @@ const socket = (io) => {
       }
     });
 
-    socket.on("typing", (idConversation,me) => {
-      socket.broadcast.to(idConversation).emit("typing",me);
+    socket.on("typing", ({idConversation,me}) => {
+      console.log("typing",me);
+      socket.broadcast.to(idConversation).emit("typing",{me,idConversation});
 
     });
 
-    socket.on("stop-typing", (idConversation,me) => {
-      socket.broadcast.to(idConversation).emit("stop-typing",me);
+    socket.on("stop-typing", ({idConversation,me}) => {
+      console.log("stop-typing",me);
+      socket.broadcast.to(idConversation).emit("stop-typing",{me,idConversation});
     });
 
     socket.on("create-conversation", ({idConversation,idList}) => {
@@ -224,13 +231,12 @@ const socket = (io) => {
     //   // io.to(idFriend).emit("updateListInvite", idUser);
     // });
 
-    socket.on("handle-request-friend", ({ idUser, idFriend,idCon,mess }) => {
+    socket.on("handle-request-friend", ({ idUser, idFriend,idCon,message }) => {
       if(idCon){
-        
         io.to(idCon).emit("update-status", {idUser,idFriend});
       }
-      if(mess){
-        io.to(idCon).emit("get-message", {mess});
+      if(message){
+        io.to(idCon).emit("get-message", {message});
       }
       io.to(idFriend).emit("update-invite", idUser);
       io.to(idUser).emit("update-inviteFr", idFriend);
