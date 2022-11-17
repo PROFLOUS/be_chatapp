@@ -66,7 +66,6 @@ routes(app, io);
 //     isOnline: true,
 //     lastLogin: null,
 // });
-
 const port = process.env.PORT;
 
 server.listen(port, () => {
