@@ -26,7 +26,6 @@ const cred = {
   cert,
 };
 
-const file = fs.readFileSync("./3A1E3EE9AB22C98FF0635688682EA289.txt");
 
 // Connect to MongoDB
 connectDB();
@@ -41,26 +40,27 @@ const serverTest = http.createServer(app);
 
 const server = https.createServer(cred, app);
 
-// const io = socketio(server, {
-//   cors: {
-//     origin: "*",
-//     credentials: true,
-//   },
-// });
-
-
-const io = socketio(serverTest,{
-    cors:{
-        origin:'*',
-        credentials:true
-    }
+const io = socketio(server, {
+  cors: {
+    origin: "*",
+    credentials: true,
+  },
 });
+
+
+// const io = socketio(serverTest,{
+//     cors:{
+//         origin:'*',
+//         credentials:true
+//     }
+// });
 
 
 socket(io);
 app.use(handleErr);
 
-// routes(app, io);
+routes(app, io);
+
 // rd.set("Ix7UVDUIrmRYOB6uGFc715drn2H4", {
 //     uid:"Ix7UVDUIrmRYOB6uGFc715drn2H4",
 //     first_name:"Cuong",
@@ -71,14 +71,11 @@ app.use(handleErr);
 // });
 const port = process.env.PORT;
 
-// server.listen(port, () => {
-//   console.log("Example app listening on http://localhost:" + port);
+server.listen(port, () => {
+  console.log("Example app listening on http://localhost:" + port);
+});
+
+
+// serverTest.listen(5005, () => {
+//   console.log("Example app listening on http://localhost:" + 5005);
 // });
-
-app.get("/.well-known/pki-validation/3A1E3EE9AB22C98FF0635688682EA289.txt", (req, res) => {
-  res.sendFile('./3A1E3EE9AB22C98FF0635688682EA289.txt', { root: __dirname });
-});
-
-serverTest.listen(5005, () => {
-  console.log("Example app listening on http://localhost:" + 5005);
-});
