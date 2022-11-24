@@ -246,22 +246,22 @@ use('test');
 //         "user.userId": { $all: ["HiIaKOEh8qTzOfTF1Va0Z6z61Qz2", "dP2GR6FMv1fJG40SK9CXeZlbLCo2"] },
 //     }
 // )
-db.friendrequests.find({
-     $or: [
-        {
-            "senderId": "dP2GR6FMv1fJG40SK9CXeZlbLCo2",
-            "receiverId": "HiIaKOEh8qTzOfTF1Va0Z6z61Qz2",
-        },
-        {
-            "senderId": "HiIaKOEh8qTzOfTF1Va0Z6z61Qz2",
-            "receiverId": "dP2GR6FMv1fJG40SK9CXeZlbLCo2",
-        },
-    ]
-})
+// db.friendrequests.find({
+//      $or: [
+//         {
+//             "senderId": "dP2GR6FMv1fJG40SK9CXeZlbLCo2",
+//             "receiverId": "HiIaKOEh8qTzOfTF1Va0Z6z61Qz2",
+//         },
+//         {
+//             "senderId": "HiIaKOEh8qTzOfTF1Va0Z6z61Qz2",
+//             "receiverId": "dP2GR6FMv1fJG40SK9CXeZlbLCo2",
+//         },
+//     ]
+// })
 
 // db.conversations.deleteMany({})
 // db.friendrequests.deleteMany({})
-// db.friends.deleteMany({})
+db.friends.deleteMany({})
 // db.members.deleteMany({})
 // db.messages.deleteMany({})
 

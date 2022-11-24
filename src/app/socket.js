@@ -120,7 +120,7 @@ const socket = (io) => {
         } else {
           socket.receiverId = receiverId;
 
-          io.to(receiverId).emit("get-last-msg-r", {receiverId });
+          io.to(receiverId).emit("get-last-msg-r", {receiverId,idCon });
           io.to(senderId).emit("get-last-msg-s", {senderId });
 
 
@@ -172,13 +172,16 @@ const socket = (io) => {
     })
     
     socket.on("seen-message", async ({ conversationId, userId }) => {
-      console.log("seen");
-      const conversationService = new ConversationService();
+      // const conversationService = new ConversationService();
       await LastMessageService.updateLastMessage(conversationId, userId);
       // const listConSender = await conversationService.getAllConversation(userId);
       // io.to(conversationId).emit("get-last",listConSender.data);
-      io.to(conversationId).emit("get-last");
+      // io.to(conversationId).emit("get-last");
+      console.log("seen");
+
     })
+
+    
 
     socket.on("get-user-online", (userId, cb) => {
       console.log("id" + userId);
