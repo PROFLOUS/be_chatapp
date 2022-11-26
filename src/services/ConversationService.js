@@ -54,14 +54,12 @@ class ConversationService {
             "members.userId":{$all:[senderID,receiverID]},
         })
         if(conversation){
-            console.log(conversation._id);
-           const listCon = await this.getAllConversation(senderID);
-           console.log(listCon);
-              const result = listCon.data.filter((con) => con.conversations._id.toString() === conversation._id.toString());
-              console.log(result);
-                return result;
+            const listCon = await this.getAllConversation(senderID);
+            const result = listCon.data.filter((con) => con.conversations._id.toString() === conversation._id.toString());
+            return result;
+        }else{
+            return null;
         }
-        return null;
     }
 
     async getInfoGroup(conversation){
