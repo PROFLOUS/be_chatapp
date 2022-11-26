@@ -48,6 +48,22 @@ class ConversationService {
         }
     }
 
+    async getOneConversation(senderID, receiverID) {
+        const conversation = await Conversation.findOne({
+            "type": false,
+            "members.userId":{$all:[senderID,receiverID]},
+        })
+        if(conversation){
+            console.log(conversation._id);
+           const listCon = await this.getAllConversation(senderID);
+           console.log(listCon);
+              const result = listCon.data.filter((con) => con.conversations._id.toString() === conversation._id.toString());
+              console.log(result);
+                return result;
+        }
+        return null;
+    }
+
     async getInfoGroup(conversation){
         const { _id, name, avatar } = conversation;
         let groupName = '';

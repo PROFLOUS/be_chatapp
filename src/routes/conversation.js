@@ -39,6 +39,9 @@ const conversationRouter =(io)=>{
     // delete group
     router.delete('/groups/:id',conversationController.deleteGroup);
 
+    router.get('/individuals/new', conversationController.getNewConversation);
+
+
     router.get('/test',(req, res) => {
         res.json({message: 'test'});
     });

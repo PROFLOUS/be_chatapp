@@ -224,6 +224,14 @@ use('test');
 //     }
 // )
 
+db.conversations.find(
+    {
+        "members.userId":{$all:["dP2GR6FMv1fJG40SK9CXeZlbLCo2","HiIaKOEh8qTzOfTF1Va0Z6z61Qz2"]},
+        "type":false,
+    }
+
+)
+
 
 // db.conversations.aggregate([
 //     {
@@ -259,9 +267,11 @@ use('test');
 //     ]
 // })
 
-// db.conversations.deleteMany({})
+// db.conversations.deleteMany({
+//     "type": true,
+// })
 // db.friendrequests.deleteMany({})
-db.friends.deleteMany({})
+// db.friends.deleteMany({})
 // db.members.deleteMany({})
 // db.messages.deleteMany({})
 

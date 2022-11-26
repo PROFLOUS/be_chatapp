@@ -281,6 +281,20 @@ class ConversationController {
         }
 
     }
+
+    async getNewConversation(req, res, next) {
+        const senderID = req.query.senderID;
+        const receiverID = req.query.receiverID;
+        console.log(senderID,receiverID)
+        const conversationService = new ConversationService();
+
+        try {
+            const conversation = await conversationService.getOneConversation(senderID, receiverID);
+                res.json(conversation);
+        }catch (err) {
+            next(err);
+        }
+    }
 }
 
 module.exports = ConversationController;
