@@ -114,9 +114,6 @@ const socket = (io) => {
       }) => {
         if (isGroup) {
           io.to(idCon).emit("get-message", { senderId, message, isGroup });
-          socket.broadcast
-            .to(idCon)
-            .emit("get-notifiGr", { message, name, avatar, nameGroup });
         } else {
           socket.receiverId = receiverId;
 

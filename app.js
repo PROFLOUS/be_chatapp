@@ -71,11 +71,11 @@ routes(app, io);
 // });
 const port = process.env.PORT;
 
-// server.listen(port, () => {
-//   console.log("Example app listening on http://localhost:" + port);
-// });
-
-
-serverTest.listen(5005, () => {
-  console.log("Example app listening on http://localhost:" + 5005);
+server.listen(port, () => {
+  console.log("Example app listening on http://localhost:" + port);
 });
+
+
+// serverTest.listen(5005, () => {
+//   console.log("Example app listening on http://localhost:" + 5005);
+// });
